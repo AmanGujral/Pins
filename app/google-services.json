@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "852947312981",
+    "project_id": "pins-d0697",
+    "storage_bucket": "pins-d0697.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:852947312981:android:34903032411f7496364fdc",
+        "android_client_info": {
+          "package_name": "com.example.pins"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "852947312981-resi2bne1stujtauconf7elbf768hh79.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd4T48QMSuPtdwPz_ILrrVa0bRbsxrrZw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "852947312981-resi2bne1stujtauconf7elbf768hh79.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

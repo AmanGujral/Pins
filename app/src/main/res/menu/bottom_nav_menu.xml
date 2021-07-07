@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_myboard"
+        android:icon="@drawable/ic_my_board_24"
+        android:title="@string/title_myboard" />
+
+    <item
+        android:id="@+id/navigation_teamboard"
+        android:icon="@drawable/ic_team_board_24"
+        android:title="@string/title_teamboard" />
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_profile_24"
+        android:title="@string/title_profile" />
+
+</menu>

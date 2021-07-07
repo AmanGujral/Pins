@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Pins</string>
+    <string name="title_activity_home">MainActivity</string>
+    <string name="title_myboard">My Board</string>
+    <string name="title_teamboard">Team Board</string>
+    <string name="title_profile">Profile</string>
+</resources>
