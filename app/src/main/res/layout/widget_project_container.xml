@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/widget_project_container_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:cardElevation="6dp"
+        app:cardCornerRadius="8dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="20dp">
+
+            <LinearLayout
+                android:id="@+id/widget_project_container_ll1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Proj. Code : "
+                    android:textSize="16sp"
+                    android:textColor="@color/medium_grey"/>
+
+                <TextView
+                    android:id="@+id/widget_project_container_projectcode_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PC102"
+                    android:textSize="16sp"
+                    android:textColor="@color/green"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/widget_project_container_ll2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/widget_project_container_ll1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Proj. Name : "
+                    android:textSize="16sp"
+                    android:textColor="@color/medium_grey"/>
+
+                <TextView
+                    android:id="@+id/widget_project_container_projectname_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Project Management"
+                    android:textSize="16sp"
+                    android:textColor="@color/green"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/widget_project_container_ll3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/widget_project_container_ll2">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Proj. Manager : "
+                    android:textSize="16sp"
+                    android:textColor="@color/medium_grey"/>
+
+                <TextView
+                    android:id="@+id/widget_project_container_projectmanager_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Amanpreet Singh"
+                    android:textSize="16sp"
+                    android:textColor="@color/green"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
