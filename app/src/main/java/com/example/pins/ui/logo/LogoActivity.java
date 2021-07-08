@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pins.R;
 import com.example.pins.ui.HomeActivity;
+import com.example.pins.ui.sign_up.SignUpActivity;
 
 public class LogoActivity extends AppCompatActivity {
 
@@ -171,7 +172,7 @@ public class LogoActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
                 startActivity(intent);
                 finish();
             }
