@@ -23,18 +23,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import org.jetbrains.annotations.NotNull;
 
 public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
- private    TextView name_i,email_i;
+    private TextView name_i,email_i;
 
-      FirebaseDatabase database;
- DatabaseReference reference;
-FirebaseAuth firebaseAuth;
-FirebaseUser user;
+      FirebaseFirestore fstore;
+      DatabaseReference reference;
+      FirebaseAuth firebaseAuth;
+      String UserID;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -43,29 +48,17 @@ FirebaseUser user;
         name_i=root.findViewById(R.id.profile_username);
         email_i=root.findViewById(R.id.profile_email);
         firebaseAuth=FirebaseAuth.getInstance();
-        user=FirebaseAuth.getInstance().getCurrentUser();
-        database=FirebaseDatabase.getInstance();
-        reference=database.getReference("Users");
-        Query query=reference.orderByChild("email").equalTo(user.getEmail());
-query.addValueEventListener(new ValueEventListener() {
-    @Override
-    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+        fstore = FirebaseFirestore.getInstance();
+        UserID = firebaseAuth.getCurrentUser().getUid();
 
-        for(DataSnapshot ds : snapshot.getChildren()){
-            String name=""+ ds.child("firstname").getValue();
-            String email=""+ ds.child("email").getValue();
-            name_i.setText(name);
-            email_i.setText(email);
-
-        }
-
-    }
-
-    @Override
-    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-    }
-});
+        DocumentReference documentReference = fstore.collection("Users").document(UserID);
+        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                name_i.setText(value.getString("firstname"));
+                email_i.setText(value.getString("email"));
+            }
+        });
 
         return root;
 
