@@ -40,13 +40,8 @@ FirebaseUser user;
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-
-
-
-
-        name_i=root.findViewById(R.id.profile_email);
-email_i=root.findViewById(R.id.profile_email);
+        name_i=root.findViewById(R.id.profile_username);
+        email_i=root.findViewById(R.id.profile_email);
         firebaseAuth=FirebaseAuth.getInstance();
         user=FirebaseAuth.getInstance().getCurrentUser();
         database=FirebaseDatabase.getInstance();
@@ -59,9 +54,8 @@ query.addValueEventListener(new ValueEventListener() {
         for(DataSnapshot ds : snapshot.getChildren()){
             String name=""+ ds.child("firstname").getValue();
             String email=""+ ds.child("email").getValue();
-name_i.setText(name);
-email_i.setText(email);
-
+            name_i.setText(name);
+            email_i.setText(email);
 
         }
 

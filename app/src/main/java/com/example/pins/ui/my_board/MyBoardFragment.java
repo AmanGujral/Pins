@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.example.pins.databinding.FragmentMyboardBinding;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MyBoardFragment extends Fragment {
 
@@ -19,6 +21,8 @@ public class MyBoardFragment extends Fragment {
 
         binding = FragmentMyboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+
 
         final TextView textView = binding.textHome;
         textView.setText("This is My Board Fragment");
