@@ -2,6 +2,7 @@ package com.example.pins.ui.logo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -12,16 +13,44 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.pins.R;
 import com.example.pins.ui.HomeActivity;
 import com.example.pins.ui.project_search.ProjectSearchActivity;
+import com.example.pins.ui.sign_in.SignInActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LogoActivity extends AppCompatActivity {
 
     ImageView appIcon;
     ImageView appLogo;
 
+    private FirebaseUser mUser ;
+
+    private FirebaseAuth mAuth;
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        mUser = mAuth.getCurrentUser();
+
+    }
+
+    private void goToHomePage(){
+        Intent intent = new Intent(LogoActivity.this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    private void goToSignIn(){
+        Intent intent = new Intent(LogoActivity.this, SignInActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logo);
+
+        mAuth = FirebaseAuth.getInstance();
 
         appIcon = findViewById(R.id.activity_logo_app_icon);
         appLogo = findViewById(R.id.activity_logo_app_logo);
@@ -172,8 +201,15 @@ public class LogoActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Intent intent = new Intent(getApplicationContext(), ProjectSearchActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getApplicationContext(), ProjectSearchActivity.class);
+//                startActivity(intent);
+
+                if(mUser != null){
+//                    Log.i("[]", "onAnimationEnd: " + mUser.getEmail());
+                    goToHomePage();
+                }else {
+                    goToSignIn();
+                }
                 finish();
             }
 

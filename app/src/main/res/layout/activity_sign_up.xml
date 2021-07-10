@@ -117,7 +117,7 @@
                 android:textSize="18dp"/>
             <TextView
                 android:layout_marginLeft="10dp"
-                android:id="@+id/SignIN"
+                android:id="@+id/SignIn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sign In"

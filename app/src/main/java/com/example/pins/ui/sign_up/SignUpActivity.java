@@ -53,7 +53,7 @@ public class SignUpActivity extends AppCompatActivity {
         password_tie = findViewById(R.id.signup_password_tie);
 
         SignUp = findViewById(R.id.signup_btn);
-        SignIn = findViewById(R.id.SignIN);
+        SignIn = findViewById(R.id.SignIn);
 
         mAuth = FirebaseAuth.getInstance();
 
