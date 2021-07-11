@@ -5,8 +5,10 @@
     <string name="title_teamboard">Team Board</string>
     <string name="title_profile">Profile</string>
     <string name="sign_in_text">Sign In</string>
-    <string name="sing_text">Sign</string>
+    <string name="sign_text">Sign\t</string>
     <string name="in_text">In</string>
-    <string name="no_account_text">Don\'t have an account?</string>
+    <string name="up_text">Up</string>
+    <string name="no_account_text">Don\'t have an account?\t</string>
+    <string name="existing_account_text">Already have an account?\t</string>
     <string name="sign_up_text">Sign Up</string>
 </resources>

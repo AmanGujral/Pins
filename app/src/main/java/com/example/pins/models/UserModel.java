@@ -4,11 +4,27 @@ public class UserModel {
 
     String userid,firstname,lastname,email;
 
+    private static UserModel userInstance;
+
+    public UserModel(){}
+
     public UserModel(String userid, String firstname, String lastname, String email) {
         this.userid = userid;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
+    }
+
+    public static UserModel getUserInstance() {
+        if(userInstance == null) {
+            userInstance = new UserModel();
+        }
+
+        return userInstance;
+    }
+
+    public void setUserInstance(UserModel instance) {
+        UserModel.userInstance = instance;
     }
 
     public String getUserid() {

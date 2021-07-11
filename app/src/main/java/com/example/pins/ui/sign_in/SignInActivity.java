@@ -7,138 +7,130 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.pins.R;
+import com.example.pins.models.UserModel;
 import com.example.pins.ui.HomeActivity;
-import com.example.pins.ui.logo.LogoActivity;
 import com.example.pins.ui.sign_up.SignUpActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.jetbrains.annotations.NotNull;
 
 public class SignInActivity extends AppCompatActivity {
 
     private FirebaseAuth mFirebaseAuth;
 
-    private static String TAG = SignInActivity.class.getName();
-
-    private TextView mSignUp;
-    private Button mSignInButton;
-
-    private EditText mEditTextEmail;
-    private EditText mEditTextPassword;
-
-    private TextInputLayout mTextInputLayoutEmail;
-    private TextInputLayout mTextInputLayoutPassword;
-
+    RelativeLayout parentLayout;
+    private TextView signUpBtn;
+    private Button signInBtn;
+    private EditText emailTie;
+    private EditText passwordTie;
+    private TextInputLayout emailTil;
+    private TextInputLayout passwordTil;
     private ProgressDialog mProgressDialog;
+
+    UserModel userInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        this.init();
-    }
 
-    private void init(){
-        mFirebaseAuth = FirebaseAuth.getInstance();
-
-        mSignUp = findViewById(R.id.SignIn);
-        mSignInButton = findViewById(R.id.signin_btn);
-
-        mEditTextEmail = (EditText) findViewById(R.id.signin_email_editText);
-        mEditTextPassword = (EditText) findViewById(R.id.signin_password_editText);
-
-        mTextInputLayoutEmail = findViewById(R.id.signin_email_layout);
-        mTextInputLayoutPassword = findViewById(R.id.signin_password_layout);
+        parentLayout = findViewById(R.id.activity_signin_layout);
+        signUpBtn = findViewById(R.id.signin_signup_btn);
+        signInBtn = findViewById(R.id.signin_btn);
+        emailTie = findViewById(R.id.signin_email_editText);
+        passwordTie = findViewById(R.id.signin_password_editText);
+        emailTil = findViewById(R.id.signin_email_layout);
+        passwordTil = findViewById(R.id.signin_password_layout);
 
         mProgressDialog = new ProgressDialog(this);
 
+        userInstance = UserModel.getUserInstance();
 
-        mSignUp.setOnClickListener(new View.OnClickListener() {
+
+        signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(SignInActivity.this,SignUpActivity.class);
-                startActivity(i);
+                startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
+                finish();
             }
         });
 
-        mSignInButton.setOnClickListener(new View.OnClickListener() {
+        signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                registerUser();
+
+                clearErrors();
+                String email = emailTie.getText().toString().trim();
+                String password  = passwordTie.getText().toString().trim();
+
+                if(TextUtils.isEmpty(email)){
+                    emailTil.setError("Please enter a valid email!");
+                    return;
+                }
+
+                if(TextUtils.isEmpty(password)){
+                    passwordTil.setError("Password cannot be empty!");
+                    return;
+                }
+
+                if(!TextUtils.isEmpty(password) && password.length() < 6){
+                    passwordTil.setError("Password must be at least 6 characters long!");
+                    return;
+                }
+
+                mProgressDialog.setMessage("Signing In Please Wait...");
+                mProgressDialog.show();
+
+                FirebaseAuth.getInstance()
+                        .signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
+                                if(task.isSuccessful() && task.getResult() != null && task.getResult().getUser() != null) {
+                                    FirebaseFirestore.getInstance()
+                                            .collection("Users")
+                                            .document(task.getResult().getUser().getUid())
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
+                                                    if(task.isSuccessful()) {
+                                                        userInstance.setUserInstance(task.getResult().toObject(UserModel.class));
+                                                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                                        finish();
+                                                    }
+                                                    mProgressDialog.dismiss();
+                                                }
+                                            });
+                                }
+                                else {
+                                    Snackbar.make(parentLayout, "Authentication Failed!", Snackbar.LENGTH_SHORT)
+                                            .setBackgroundTint(getResources().getColor(R.color.green))
+                                            .show();
+                                }
+                            }
+                        });
             }
         });
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-
     private void clearErrors(){
-        mTextInputLayoutPassword.setError(null);
-        mTextInputLayoutEmail.setError(null);
-    }
-
-
-    private void registerUser(){
-
-        clearErrors();
-        String email = mEditTextEmail.getText().toString().trim();
-        String password  = mEditTextPassword.getText().toString().trim();
-
-        if(TextUtils.isEmpty(email)){
-            mTextInputLayoutEmail.setError("Please enter email");
-            return;
-        }
-
-        if(TextUtils.isEmpty(password)){
-            mTextInputLayoutPassword.setError("Please enter password");
-            return;
-        }
-
-        if(!TextUtils.isEmpty(password) && password.length() < 6){
-            mTextInputLayoutPassword.setError("Password must be at least 6 characters long!");
-            return;
-        }
-
-        clearErrors();
-
-        mProgressDialog.setMessage("Signin Please Wait...");
-        mProgressDialog.show();
-
-        //creating a new user
-        mFirebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                           goToHomePage();
-                        }else{
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(SignInActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                        }
-                        mProgressDialog.dismiss();
-                    }
-                });
-    }
-
-    private void goToHomePage(){
-        Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        passwordTil.setError(null);
+        emailTil.setError(null);
     }
 }

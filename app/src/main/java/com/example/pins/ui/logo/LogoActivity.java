@@ -2,58 +2,44 @@ package com.example.pins.ui.logo;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pins.R;
+import com.example.pins.models.UserModel;
 import com.example.pins.ui.HomeActivity;
-import com.example.pins.ui.project_search.ProjectSearchActivity;
 import com.example.pins.ui.sign_in.SignInActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.jetbrains.annotations.NotNull;
 
 public class LogoActivity extends AppCompatActivity {
 
     ImageView appIcon;
     ImageView appLogo;
 
-    private FirebaseUser mUser ;
+    private UserModel userInstance;
 
-    private FirebaseAuth mAuth;
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        mUser = mAuth.getCurrentUser();
-
-    }
-
-    private void goToHomePage(){
-        Intent intent = new Intent(LogoActivity.this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
-
-    private void goToSignIn(){
-        Intent intent = new Intent(LogoActivity.this, SignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logo);
 
-        mAuth = FirebaseAuth.getInstance();
-
         appIcon = findViewById(R.id.activity_logo_app_icon);
         appLogo = findViewById(R.id.activity_logo_app_logo);
+
+        userInstance = UserModel.getUserInstance();
 
 
         //********************************************************
@@ -201,16 +187,32 @@ public class LogoActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-//                Intent intent = new Intent(getApplicationContext(), ProjectSearchActivity.class);
-//                startActivity(intent);
 
-                if(mUser != null){
-//                    Log.i("[]", "onAnimationEnd: " + mUser.getEmail());
-                    goToHomePage();
-                }else {
-                    goToSignIn();
+                // Check if the user is already logged in or not
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                // If user is not null, get user data and go to Home Activity
+                if(user != null) {
+                    FirebaseFirestore.getInstance()
+                            .collection("Users")
+                            .document(user.getUid())
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()) {
+                                        userInstance.setUserInstance(task.getResult().toObject(UserModel.class));
+                                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                        finish();
+                                    }
+                                }
+                            });
                 }
-                finish();
+                else {
+                    // If user is null, go to SignIn Activity
+                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                    finish();
+                }
             }
 
             @Override

@@ -1,45 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.sign_in.SignInActivity">
+    tools:context=".ui.sign_in.SignInActivity"
+    android:paddingHorizontal="20dp"
+    android:id="@+id/activity_signin_layout">
 
   <LinearLayout
       android:orientation="horizontal"
       android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      >
+      android:layout_height="wrap_content">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:text="@string/sing_text"
-        android:textSize="65dp"
+        android:text="@string/sign_text"
+        android:textColor="@color/medium_grey"
+        android:textSize="66sp"
         android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
         android:text="@string/in_text"
         android:textColor="@color/green"
-        android:textSize="65dp"
+        android:textSize="66sp"
         android:textStyle="bold" />
   </LinearLayout>
+
   <LinearLayout
       android:gravity="center"
       android:orientation="vertical"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signin_email_layout"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusBottomEnd="10dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:errorEnabled="true">
 
@@ -55,9 +60,12 @@
         android:id="@+id/signin_password_layout"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        app:passwordToggleEnabled="false"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/green"
-
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:errorEnabled="true">
 
@@ -71,12 +79,15 @@
 
     <Button
         android:id="@+id/signin_btn"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
+        android:textSize="20sp"
         android:text="@string/sign_in_text"
-        android:textColor="@color/green" />
+        android:textColor="@color/green"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:paddingVertical="12dp"/>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
@@ -86,18 +97,19 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="@string/no_account_text"
-          android:textSize="18dp" />
+          android:textSize="18sp" />
 
       <TextView
-          android:id="@+id/SignIn"
+          android:id="@+id/signin_signup_btn"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginLeft="10dp"
           android:text="@string/sign_up_text"
           android:textColor="@color/green"
-          android:textSize="20dp"
-          android:textStyle="bold" />
+          android:textSize="20sp"
+          android:textStyle="bold"
+          android:clickable="true"
+          android:focusable="true"/>
     </LinearLayout>
 
   </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

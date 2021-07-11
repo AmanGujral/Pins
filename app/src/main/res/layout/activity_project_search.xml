@@ -23,17 +23,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Project "
-                android:textSize="42sp"
+                android:textSize="44sp"
                 android:textStyle="bold"
+                android:fontFamily="sans-serif-black"
                 android:textColor="@color/medium_grey" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Search"
-                android:textSize="42sp"
+                android:textSize="44sp"
                 android:textStyle="bold"
-                android:textColor="@color/dark_grey" />
+                android:fontFamily="sans-serif-black"
+                android:textColor="@color/green" />
 
         </LinearLayout>
 

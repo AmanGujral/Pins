@@ -1,52 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.sign_up.SignUpActivity">
+    tools:context=".ui.sign_up.SignUpActivity"
+    android:paddingHorizontal="20dp"
+    android:id="@+id/activity_signup_layout">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
+
         <TextView
-            android:text="Sign"
-            android:textSize="65dp"
-            android:textStyle="bold"
-            android:layout_marginLeft="50dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
-        <TextView
-            android:text="Up"
+            android:text="@string/sign_text"
+            android:textSize="66sp"
             android:textStyle="bold"
-            android:textSize="65dp"
-            android:layout_marginLeft="20dp"
-            android:textColor="@color/green"
+            android:textColor="@color/medium_grey"/>
+
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@string/up_text"
+            android:textStyle="bold"
+            android:textSize="66sp"
+            android:textColor="@color/green" />
+
     </LinearLayout>
+
+
     <LinearLayout
         android:gravity="center"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/signup_firstname_til"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp"
             app:errorEnabled="true">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/signup_firstname_tie"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/green"
-            android:hint="First Name" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/signup_firstname_tie"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/green"
+                android:hint="First Name" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -54,6 +63,10 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp"
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -69,6 +82,10 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp"
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -85,8 +102,11 @@
             android:layout_height="wrap_content"
             app:passwordToggleEnabled="true"
             app:passwordToggleTint="@color/green"
-
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp"
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -101,11 +121,12 @@
             android:id="@+id/signup_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign Up"
+            android:layout_marginTop="30dp"
+            android:textSize="20sp"
+            android:text="@string/sign_up_text"
             android:textColor="@color/green"
-            android:layout_marginTop="40dp"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            />
+            android:paddingVertical="12dp"/>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
@@ -113,18 +134,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Already have an account?"
-                android:textSize="18dp"/>
+                android:text="@string/existing_account_text"
+                android:textSize="18sp"/>
             <TextView
-                android:layout_marginLeft="10dp"
-                android:id="@+id/SignIn"
+                android:id="@+id/signup_signin_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign In"
+                android:text="@string/sign_in_text"
                 android:textColor="@color/green"
-                android:textSize="20dp"
-                android:textStyle="bold"/>
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"/>
         </LinearLayout>
 
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

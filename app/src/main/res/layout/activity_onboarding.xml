@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.onboarding.OnboardingActivity">
+    tools:context=".ui.onboarding.OnboardingActivity"
+    android:padding="20dp">
 
     <TextView
         android:id="@+id/Welcome"
@@ -12,18 +13,123 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-black"
         android:text="Welcome,"
-        android:textSize="40sp"
-        tools:layout_editor_absoluteX="24dp"
-        tools:layout_editor_absoluteY="33dp" />
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:textColor="@color/medium_grey" />
 
     <TextView
-        android:id="@+id/uname"
+        android:id="@+id/activity_onboarding_username_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-black"
-        android:text="name"
+        android:text="Username"
         android:textColor="@color/green"
-        android:textSize="20sp"
-        tools:layout_editor_absoluteX="24dp"
-        tools:layout_editor_absoluteY="104dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:textSize="40sp"
+        android:fontFamily="sans-serif-light"
+        android:layout_below="@id/Welcome"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:paddingVertical="10dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please click "
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="@color/medium_grey"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Continue"
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="@color/green"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="to join your first project."
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-condensed"
+            android:textColor="@color/medium_grey"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\nIf you wish to join later,"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-condensed"
+            android:textColor="@color/medium_grey"
+            android:layout_gravity="center"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="click "
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="@color/medium_grey"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Skip\n\n"
+                android:textSize="22sp"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="@color/dark_grey"/>
+
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/activity_onboarding_continue_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/green"
+            app:contentPadding="10dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Continue"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:textSize="18sp"
+                android:textColor="@color/white"/>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/activity_onboarding_skip_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Skip"
+        android:textColor="@color/medium_grey"
+        android:textSize="18sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:clickable="true"
+        android:focusable="true"/>
+</RelativeLayout>
