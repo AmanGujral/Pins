@@ -9,14 +9,32 @@
     android:paddingBottom="80dp"
     android:paddingTop="20dp">
 
-    <TextView
+    <LinearLayout
         android:id="@+id/fragment_profile_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Profile"
-        android:textSize="44sp"
-        android:textColor="@color/medium_grey"
-        android:fontFamily="sans-serif-black"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Profile"
+            android:textSize="44sp"
+            android:textColor="@color/medium_grey"
+            android:fontFamily="sans-serif-black"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chat_24"
+            android:scaleY="1.5"
+            android:scaleX="1.5"
+            android:background="@color/transparent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="4dp"/>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/profile_username"

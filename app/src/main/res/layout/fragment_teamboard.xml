@@ -1,22 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.team_board.TeamBoardFragment">
 
-    <TextView
-        android:id="@+id/text_dashboard"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="match_parent"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="60dp">
+
+        <LinearLayout
+            android:id="@+id/fragment_teamboard_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Team Board"
+                android:textSize="44sp"
+                android:textColor="@color/medium_grey"
+                android:fontFamily="sans-serif-black"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_chat_24"
+                android:scaleY="1.5"
+                android:scaleX="1.5"
+                android:background="@color/transparent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="4dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/fragment_teamboard_project_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Project Name"
+            android:textSize="34sp"
+            android:textColor="@color/green"
+            android:fontFamily="sans-serif-light"
+            android:layout_below="@id/fragment_teamboard_title" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -24,8 +24,6 @@ public class TeamBoardFragment extends Fragment {
         binding = FragmentTeamboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        textView.setText("This is Team Board Fragment");
 
         return root;
     }

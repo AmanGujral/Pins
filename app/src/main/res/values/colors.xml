@@ -13,4 +13,5 @@
     <color name="medium_grey">#AEAEAE</color>
     <color name="light_grey">#DADADA</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="white_20">#34A6A6A6</color>
 </resources>
