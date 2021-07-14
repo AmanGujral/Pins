@@ -18,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pins.R;
+import com.example.pins.models.ProjectMemberModel;
 import com.example.pins.models.ProjectModel;
+import com.example.pins.models.UserModel;
 import com.example.pins.structures.ProjectAdapter;
 import com.example.pins.ui.HomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,6 +53,7 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
     ProjectAdapter adapter;
 
     FirebaseFirestore firestoreInstance = FirebaseFirestore.getInstance();
+    UserModel userInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,7 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
         errorMsg = findViewById(R.id.activity_project_search_error_msg);
         parentLayout = findViewById(R.id.activity_project_search_parent_layout);
 
+        userInstance = UserModel.getUserInstance();
 
         searchBtn.setVisibility(View.VISIBLE);
         closeSearchBtn.setVisibility(View.GONE);
@@ -223,6 +228,52 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.e("Item Clicked: ", allProjects.get(position).getProjectCode());
+        if(query.equalsIgnoreCase("")) {
+            Log.e("Item Clicked: ", allProjects.get(position).getProjectCode());
+            addProject(allProjects.get(position));
+        }
+        else {
+            Log.e("Item Clicked: ", searchedProjects.get(position).getProjectCode());
+            addProject(searchedProjects.get(position));
+        }
+    }
+
+    public void addProject(ProjectModel project) {
+        List<String> allProjects = new ArrayList<>();
+        if (userInstance.getAllProjects() != null) {
+            allProjects = userInstance.getAllProjects();
+        }
+        allProjects.add(project.getProjectId());
+
+        userInstance.setAllProjects(allProjects);
+        userInstance.setCurrentProjectId(project.getProjectId());
+
+        ProjectMemberModel projectMember = new ProjectMemberModel(
+                userInstance.getUserid(),
+                userInstance.getFirstname(),
+                userInstance.getLastname(),
+                userInstance.getEmail(),
+                userInstance.getRole(),
+                userInstance.getImageUrl()
+        );
+
+        firestoreInstance.collection("Users")
+                .document(userInstance.getUserid())
+                .set(userInstance, SetOptions.merge());
+
+        firestoreInstance.collection("Projects")
+                .document(project.getProjectId())
+                .collection("Project Members")
+                .document(userInstance.getUserid())
+                .set(projectMember, SetOptions.merge())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                            finish();
+                        }
+                    }
+                });
     }
 }

@@ -1,55 +1,33 @@
 package com.example.pins.models;
 
-import java.util.List;
-
-public class UserModel {
-
+public class ProjectMemberModel {
     private String userid;
     private String firstname;
     private String lastname;
     private String email;
     private String role;
     private String imageUrl;
-    private String currentProjectId;
-    private List<String> allProjects;
+
 
     public static final String ROLE_MANAGER = "Manager";
     public static final String ROLE_EMPLOYEE = "Employee";
 
-    private static UserModel userInstance;
+    public ProjectMemberModel(){}
 
-    public UserModel(){}
-
-    public UserModel(
+    public ProjectMemberModel(
             String userid,
             String firstname,
             String lastname,
             String email,
             String role,
-            String imageUrl,
-            String currentProjectId,
-            List<String> allProjects
-            ) {
+            String imageUrl
+    ) {
         this.userid = userid;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.role = role;
         this.imageUrl = imageUrl;
-        this.currentProjectId = currentProjectId;
-        this.allProjects = allProjects;
-    }
-
-    public static UserModel getUserInstance() {
-        if(userInstance == null) {
-            userInstance = new UserModel();
-        }
-
-        return userInstance;
-    }
-
-    public void setUserInstance(UserModel instance) {
-        UserModel.userInstance = instance;
     }
 
     public String getUserid() {
@@ -100,19 +78,4 @@ public class UserModel {
         this.imageUrl = imageUrl;
     }
 
-    public String getCurrentProjectId() {
-        return currentProjectId;
-    }
-
-    public void setCurrentProjectId(String currentProjectId) {
-        this.currentProjectId = currentProjectId;
-    }
-
-    public List<String> getAllProjects() {
-        return allProjects;
-    }
-
-    public void setAllProjects(List<String> allProjects) {
-        this.allProjects = allProjects;
-    }
 }

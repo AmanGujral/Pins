@@ -14,6 +14,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.pins.R;
 import com.example.pins.databinding.ActivityHomeBinding;
+import com.example.pins.ui.project_search.ProjectSearchActivity;
 import com.example.pins.ui.sign_in.SignInActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -24,6 +25,7 @@ public class HomeActivity extends AppCompatActivity {
     ImageButton hidePanelBtn;
     ImageButton showPanelBtn;
     ImageButton logoutBtn;
+    ImageButton addProjectBtn;
     RelativeLayout sidePanel;
 
 
@@ -48,6 +50,7 @@ public class HomeActivity extends AppCompatActivity {
         showPanelBtn = binding.showPanelBtn;
         logoutBtn = binding.sidePanelLogoutBtn;
         sidePanel = binding.sidePanelLayout;
+        addProjectBtn = binding.sidePanelAddProjectBtn;
 
         showPanelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +63,13 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sidePanel.setVisibility(View.GONE);
+            }
+        });
+
+        addProjectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), ProjectSearchActivity.class));
             }
         });
 
