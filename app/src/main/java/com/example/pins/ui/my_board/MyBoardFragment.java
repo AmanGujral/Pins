@@ -139,7 +139,7 @@ public class MyBoardFragment extends Fragment {
     }
 
     public void getCurrentProject() {
-        if(userInstance.getCurrentProjectId() == null) {
+        if(userInstance.getCurrentProjectId() == null || userInstance.getCurrentProjectId().isEmpty()) {
             initLayout();
         }
         else {

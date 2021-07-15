@@ -282,6 +282,12 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
         List<String> allProjects = new ArrayList<>();
         if (userInstance.getAllProjects() != null) {
             allProjects = userInstance.getAllProjects();
+            if(allProjects.contains(project.getProjectId())) {
+                Snackbar.make(parentLayout, "You are already added to this project.", Snackbar.LENGTH_SHORT)
+                        .setBackgroundTint(getResources().getColor(R.color.green_dark))
+                        .show();
+                return;
+            }
         }
         allProjects.add(project.getProjectId());
 
