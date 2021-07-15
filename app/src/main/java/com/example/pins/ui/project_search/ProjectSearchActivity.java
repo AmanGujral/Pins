@@ -5,12 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -229,13 +233,49 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
     @Override
     public void onItemClick(View view, int position) {
         if(query.equalsIgnoreCase("")) {
-            Log.e("Item Clicked: ", allProjects.get(position).getProjectCode());
-            addProject(allProjects.get(position));
+            showDialog(allProjects.get(position));
         }
         else {
-            Log.e("Item Clicked: ", searchedProjects.get(position).getProjectCode());
-            addProject(searchedProjects.get(position));
+            showDialog(searchedProjects.get(position));
         }
+    }
+
+    public void showDialog(ProjectModel project) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ProjectSearchActivity.this);
+        AlertDialog alertDialog;
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_add_project, null);
+        alertDialogBuilder.setView(dialogView);
+
+        TextView projectCode = dialogView.findViewById(R.id.alert_dialog_add_project_project_code_tv);
+        TextView projectName = dialogView.findViewById(R.id.alert_dialog_add_project_project_name_tv);
+        TextView projectManager = dialogView.findViewById(R.id.alert_dialog_add_project_project_manager_tv);
+        Button noBtn = dialogView.findViewById(R.id.alert_dialog_add_project_no_btn);
+        Button yesBtn = dialogView.findViewById(R.id.alert_dialog_add_project_yes_btn);
+
+        projectCode.setText(project.getProjectCode());
+        projectName.setText(project.getProjectName());
+        projectManager.setText(project.getManagerName());
+
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addProject(project);
+                alertDialog.dismiss();
+            }
+        });
+
+        noBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
     }
 
     public void addProject(ProjectModel project) {
