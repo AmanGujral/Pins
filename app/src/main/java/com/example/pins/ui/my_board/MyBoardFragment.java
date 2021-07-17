@@ -10,26 +10,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pins.R;
 import com.example.pins.databinding.FragmentMyboardBinding;
 import com.example.pins.models.ProjectModel;
+import com.example.pins.models.TaskModel;
 import com.example.pins.models.UserModel;
+import com.example.pins.structures.TaskAdapter;
 import com.example.pins.ui.project_search.ProjectSearchActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MyBoardFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickListener {
 
     private FragmentMyboardBinding binding;
 
@@ -44,8 +54,31 @@ public class MyBoardFragment extends Fragment {
     RelativeLayout searchLayout;
     RelativeLayout boardLayout;
 
+    LinearLayout todoCompressed;
+    LinearLayout todoExpanded;
+    LinearLayout doingCompressed;
+    LinearLayout doingExpanded;
+    LinearLayout doneCompressed;
+    LinearLayout doneExpanded;
+
+    ImageButton todoExpandBtn;
+    ImageButton doingExpandBtn;
+    ImageButton doneExpandBtn;
+
+    RecyclerView todoRecyclerview;
+    RecyclerView doingRecyclerview;
+    RecyclerView doneRecyclerview;
+
+    TaskAdapter todoTaskAdapter;
+    TaskAdapter doingTaskAdapter;
+    TaskAdapter doneTaskAdapter;
+
     UserModel userInstance;
     ProjectModel currentProject;
+    List<TaskModel> allTaskList = new ArrayList<>();
+    List<TaskModel> todoTaskList = new ArrayList<>();
+    List<TaskModel> doingTaskList = new ArrayList<>();
+    List<TaskModel> doneTaskList = new ArrayList<>();
     String query = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -63,6 +96,18 @@ public class MyBoardFragment extends Fragment {
         parentLayout = binding.fragmentMyboardParentLayout;
         searchLayout = binding.fragmentMyboardSearchLayout;
         boardLayout = binding.fragmentMyboardBoardLayout;
+        todoCompressed = binding.fragmentMyboardTodoLayoutCompressed;
+        todoExpanded = binding.fragmentMyboardTodoLayoutExpanded;
+        doingCompressed = binding.fragmentMyboardDoingLayoutCompressed;
+        doingExpanded = binding.fragmentMyboardDoingLayoutExpanded;
+        doneCompressed = binding.fragmentMyboardDoneLayoutCompressed;
+        doneExpanded = binding.fragmentMyboardDoneLayoutExpanded;
+        todoExpandBtn = binding.fragmentMyboardTodoExpandBtn;
+        doingExpandBtn = binding.fragmentMyboardDoingExpandBtn;
+        doneExpandBtn = binding.fragmentMyboardDoneExpandBtn;
+        todoRecyclerview = binding.fragmentMyboardTodoRecyclerview;
+        doingRecyclerview = binding.fragmentMyboardDoingRecyclerview;
+        doneRecyclerview = binding.fragmentMyboardDoneRecyclerview;
 
         userInstance = UserModel.getUserInstance();
 
@@ -129,6 +174,27 @@ public class MyBoardFragment extends Fragment {
             }
         });
 
+        todoExpandBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTodoBoard();
+            }
+        });
+
+        doingExpandBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDoingBoard();
+            }
+        });
+
+        doneExpandBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDoneBoard();
+            }
+        });
+
         return root;
     }
 
@@ -159,9 +225,53 @@ public class MyBoardFragment extends Fragment {
         }
     }
 
+    public void getTasks() {
+        allTaskList.clear();
+        todoTaskList.clear();
+        doingTaskList.clear();
+        doneTaskList.clear();
+
+        FirebaseFirestore.getInstance()
+                .collection("Projects")
+                .document(currentProject.getProjectId())
+                .collection("Tasks")
+                .orderBy("priority")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful() && task.getResult() != null) {
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                allTaskList.add(doc.toObject(TaskModel.class));
+                            }
+                            for(TaskModel taskModel : allTaskList) {
+                                if(taskModel.getStatus().equals(TaskModel.STATUS_DONE))
+                                    doneTaskList.add(taskModel);
+                                else if(taskModel.getStatus().equals(TaskModel.STATUS_DOING))
+                                    doingTaskList.add(taskModel);
+                                else
+                                    todoTaskList.add(taskModel);
+                            }
+                            todoRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+                            doingRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+                            doneRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+
+                            todoTaskAdapter = new TaskAdapter(getContext(), todoTaskList, MyBoardFragment.this);
+                            doingTaskAdapter = new TaskAdapter(getContext(), doingTaskList, MyBoardFragment.this);
+                            doneTaskAdapter = new TaskAdapter(getContext(), doneTaskList, MyBoardFragment.this);
+
+                            todoRecyclerview.setAdapter(todoTaskAdapter);
+                            doingRecyclerview.setAdapter(doingTaskAdapter);
+                            doneRecyclerview.setAdapter(doneTaskAdapter);
+                        }
+                    }
+                });
+    }
+
     public void initLayout() {
         if(currentProject != null) {
             projectName.setText(currentProject.getProjectName());
+            getTasks();
             showBoardLayout();
         }
         else {
@@ -186,5 +296,43 @@ public class MyBoardFragment extends Fragment {
         errorMsgLayout.setVisibility(View.GONE);
         searchLayout.setVisibility(View.GONE);
         boardLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void showTodoBoard() {
+        todoCompressed.setVisibility(View.GONE);
+        todoExpanded.setVisibility(View.VISIBLE);
+
+        doingCompressed.setVisibility(View.VISIBLE);
+        doingExpanded.setVisibility(View.GONE);
+
+        doneCompressed.setVisibility(View.VISIBLE);
+        doneExpanded.setVisibility(View.GONE);
+    }
+
+    public void showDoingBoard() {
+        todoCompressed.setVisibility(View.VISIBLE);
+        todoExpanded.setVisibility(View.GONE);
+
+        doingCompressed.setVisibility(View.GONE);
+        doingExpanded.setVisibility(View.VISIBLE);
+
+        doneCompressed.setVisibility(View.VISIBLE);
+        doneExpanded.setVisibility(View.GONE);
+    }
+
+    public void showDoneBoard() {
+        todoCompressed.setVisibility(View.VISIBLE);
+        todoExpanded.setVisibility(View.GONE);
+
+        doingCompressed.setVisibility(View.VISIBLE);
+        doingExpanded.setVisibility(View.GONE);
+
+        doneCompressed.setVisibility(View.GONE);
+        doneExpanded.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Log.e("Task Name", todoTaskList.get(position).getTaskName());
     }
 }

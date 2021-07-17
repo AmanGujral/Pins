@@ -11,9 +11,9 @@ public class TaskModel {
     public static final String STATUS_DOING = "Doing";
     public static final String STATUS_DONE = "Done";
 
-    public static final String PRIORITY_LOW = "Low";
-    public static final String PRIORITY_MEDIUM = "Medium";
-    public static final String PRIORITY_HIGH = "High";
+    public static final String PRIORITY_LOW = "3";
+    public static final String PRIORITY_MEDIUM = "2";
+    public static final String PRIORITY_HIGH = "1";
 
     public TaskModel() {}
 

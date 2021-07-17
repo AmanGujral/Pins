@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="20dp"
     android:paddingTop="20dp"
-    android:paddingBottom="60dp"
+    android:paddingBottom="40dp"
     tools:context=".ui.my_board.MyBoardFragment"
     android:id="@+id/fragment_myboard_parent_layout">
 
@@ -26,6 +26,7 @@
             android:layout_weight="1"/>
 
         <ImageButton
+            android:id="@+id/fragmentt_myboard_msg_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_chat_24"
@@ -141,8 +142,232 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/fragment_myboard_searchbar_layout"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="60dp"
         android:visibility="visible">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/fragment_myboard_todo_layout_compressed"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginEnd="10dp">
+
+                <ImageButton
+                    android:id="@+id/fragment_myboard_todo_expand_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/transparent"
+                    android:src="@drawable/ic_right_grey"
+                    android:scaleY="1.5"
+                    android:scaleX="1.5"
+                    android:layout_gravity="center_horizontal"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/board_border"
+                    android:paddingTop="10dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:gravity="center"
+                        android:text="To Do"
+                        android:textSize="16sp"
+                        android:rotation="90"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_myboard_todo_layout_expanded"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp">
+
+                <TextView
+                    android:id="@+id/fragment_myboard_todo_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="To Do"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="18sp"
+                    android:textColor="@color/green"
+                    android:gravity="center_vertical"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/board_border"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/fragment_myboard_todo_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:listitem="@layout/widget_task_container"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/fragment_myboard_doing_layout_compressed"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:layout_marginEnd="10dp">
+
+                <ImageButton
+                    android:id="@+id/fragment_myboard_doing_expand_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/transparent"
+                    android:src="@drawable/ic_right_grey"
+                    android:scaleY="1.5"
+                    android:scaleX="1.5"
+                    android:layout_gravity="center_horizontal"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/board_border"
+                    android:paddingTop="10dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:gravity="center"
+                        android:text="Doing"
+                        android:textSize="16sp"
+                        android:rotation="90"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_myboard_doing_layout_expanded"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp">
+
+                <TextView
+                    android:id="@+id/fragment_myboard_doing_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="Doing"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="18sp"
+                    android:textColor="@color/green"
+                    android:gravity="center_vertical"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/board_border"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/fragment_myboard_doing_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/fragment_myboard_done_layout_compressed"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <ImageButton
+                    android:id="@+id/fragment_myboard_done_expand_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/transparent"
+                    android:src="@drawable/ic_right_grey"
+                    android:scaleY="1.5"
+                    android:scaleX="1.5"
+                    android:layout_gravity="center_horizontal"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/board_border"
+                    android:paddingTop="10dp">
+
+                    <TextView
+                        android:layout_width="50dp"
+                        android:layout_height="60dp"
+                        android:gravity="center"
+                        android:text="Done"
+                        android:textSize="16sp"
+                        android:rotation="90"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_myboard_done_layout_expanded"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/fragment_myboard_done_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="Done"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="18sp"
+                    android:textColor="@color/green"
+                    android:gravity="center_vertical"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/board_border"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="15dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/fragment_myboard_done_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </RelativeLayout>
 
