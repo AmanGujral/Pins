@@ -22,8 +22,7 @@ import java.util.List;
 
 public class useradapter extends RecyclerView.Adapter {
 
-    public TextView username;
-    public  ImageView userimage;
+
     private Context mcontext;
     private List<User> muser;
 
@@ -51,9 +50,10 @@ public class useradapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
         
-        username.findViewById(R.id.profile_username);
+
         User user=muser.get(position);
-        holder.username.setText(user.getUid());
+
+        //holder.username.setText(user.getUid());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,10 +74,8 @@ public class useradapter extends RecyclerView.Adapter {
 
     public class ViewHolder extends  RecyclerView.ViewHolder
     {
-
-      
-
-
+        public TextView username;
+        public  ImageView userimage;
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 

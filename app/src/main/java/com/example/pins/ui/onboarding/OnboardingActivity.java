@@ -19,6 +19,7 @@ public class OnboardingActivity extends AppCompatActivity {
     CardView continueBtn;
     TextView skipBtn;
 
+
     UserModel userInstance;
 
     @Override

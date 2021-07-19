@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class userfragment<UserAdapter> extends Fragment {
+public class userfragment<UserAdapter extends RecyclerView.Adapter> extends Fragment {
 
 private RecyclerView recyclerView;
 private UserAdapter userAdapter;
@@ -107,8 +107,8 @@ private List<User> muser;
 
 
     }
-                userAdapter= new UserAdapter(getContext(), muser);
-                recyclerView.setAdapter(Adapter);
+                userAdapter= (UserAdapter) new useradapter(getContext(), muser);
+                recyclerView.setAdapter(userAdapter);
 }
 
             @Override

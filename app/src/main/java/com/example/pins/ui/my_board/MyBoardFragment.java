@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.pins.MessagesActivity;
 import com.example.pins.R;
 import com.example.pins.databinding.FragmentMyboardBinding;
 import com.example.pins.models.ProjectModel;
@@ -48,6 +49,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     EditText searchField;
     ImageButton searchBtn;
     ImageButton closeSearchBtn;
+    ImageButton messages;
 
     RelativeLayout parentLayout;
     RelativeLayout errorMsgLayout;
@@ -108,6 +110,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         todoRecyclerview = binding.fragmentMyboardTodoRecyclerview;
         doingRecyclerview = binding.fragmentMyboardDoingRecyclerview;
         doneRecyclerview = binding.fragmentMyboardDoneRecyclerview;
+        messages = binding.fragmentMyboardMsgBtn;
 
         userInstance = UserModel.getUserInstance();
 
@@ -115,6 +118,13 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         closeSearchBtn.setVisibility(View.GONE);
 
         getCurrentProject();
+
+        messages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), MessagesActivity.class));
+            }
+        });
 
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
