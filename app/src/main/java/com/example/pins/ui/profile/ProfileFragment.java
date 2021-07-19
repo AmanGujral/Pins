@@ -62,8 +62,7 @@ public class ProfileFragment extends Fragment {
         logoutBtn = binding.logoutBtn;
         usernameTv = binding.profileUsername;
         emailTv = binding.profileEmail;
-        profilepic.findViewById(R.id.profile_image);
-
+        profilepic= binding.profileImage;
         userInstance = UserModel.getUserInstance();
 
         String fullname = userInstance.getFirstname() + " " + userInstance.getLastname();
