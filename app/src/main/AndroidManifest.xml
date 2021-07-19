@@ -9,7 +9,9 @@
         android:roundIcon="@drawable/pins_app_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.Pins.NoActionBar">
-        <activity android:name=".ui.logo.LogoActivity"
+        <activity android:name=".ui.message.messageactivity"></activity>
+        <activity
+            android:name=".ui.logo.LogoActivity"
             android:theme="@style/Theme.Pins.NoActionBar.NoStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,8 +25,7 @@
         <activity android:name=".ui.sign_up.SignUpActivity" />
         <activity
             android:name=".ui.HomeActivity"
-            android:label="@string/title_activity_home">
-        </activity>
+            android:label="@string/title_activity_home"></activity>
     </application>
 
 </manifest>

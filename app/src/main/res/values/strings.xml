@@ -11,4 +11,6 @@
     <string name="no_account_text">Don\'t have an account?\t</string>
     <string name="existing_account_text">Already have an account?\t</string>
     <string name="sign_up_text">Sign Up</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
