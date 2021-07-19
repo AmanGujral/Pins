@@ -104,6 +104,10 @@ public class SignUpActivity extends AppCompatActivity {
                                         userInstance.setFirstname(firstname_tie.getText().toString());
                                         userInstance.setLastname(lastname_tie.getText().toString());
                                         userInstance.setEmail(email_tie.getText().toString());
+                                        userInstance.setRole(UserModel.ROLE_EMPLOYEE);
+                                        userInstance.setImageUrl("");
+                                        userInstance.setCurrentProjectId("");
+                                        userInstance.setAllProjects(null);
 
                                         FirebaseFirestore.getInstance()
                                                 .collection("Users")
@@ -112,7 +116,11 @@ public class SignUpActivity extends AppCompatActivity {
                                                         userInstance.getUserid(),
                                                         userInstance.getFirstname(),
                                                         userInstance.getLastname(),
-                                                        userInstance.getEmail()
+                                                        userInstance.getEmail(),
+                                                        userInstance.getRole(),
+                                                        userInstance.getImageUrl(),
+                                                        userInstance.getCurrentProjectId(),
+                                                        userInstance.getAllProjects()
                                                 ))
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
