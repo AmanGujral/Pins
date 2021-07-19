@@ -50,21 +50,21 @@
         android:id="@+id/profile_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Email"
-        android:textSize="24sp"
-        android:textColor="@color/green"
+        android:layout_below="@id/profile_username"
+        android:layout_marginTop="14dp"
         android:fontFamily="sans-serif-light"
-        android:layout_below="@id/profile_username" />
+        android:text="Email"
+        android:textColor="@color/green"
+        android:textSize="24sp" />
 
     <ImageView
         android:id="@+id/profile_image"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:src="@drawable/ic_profile_24"
-        android:scaleType="centerCrop"
-        android:layout_marginTop="20dp"
         android:layout_below="@id/profile_email"
-        />
+        android:layout_marginTop="39dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_profile_24" />
 
     <Button
         android:id="@+id/logout_btn"
@@ -74,6 +74,20 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"/>
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/logout_btn"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="516dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="63dp"
+        android:spinnerMode="dropdown" />
 
 </RelativeLayout>
 

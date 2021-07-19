@@ -98,7 +98,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==1 && resultCode==-1 && data!=null && data.getData()!=null) {
+        if (requestCode==1 && resultCode==1 && data!=null && data.getData()!=null) {
             imguri = data.getData();
             profilepic.setImageURI(imguri);
             uploadpic();
@@ -116,8 +116,9 @@ public class ProfileFragment extends Fragment {
         upldref.putFile(imguri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(getContext(), "Upload Successful", Toast.LENGTH_LONG);
+                Toast.makeText(getContext(), "Upload Successful", Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
