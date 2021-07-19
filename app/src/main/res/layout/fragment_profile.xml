@@ -63,7 +63,8 @@
         android:src="@drawable/ic_profile_24"
         android:scaleType="centerCrop"
         android:layout_marginTop="20dp"
-        android:layout_below="@id/profile_email" />
+        android:layout_below="@id/profile_email"
+        />
 
     <Button
         android:id="@+id/logout_btn"

@@ -50,7 +50,8 @@ public class useradapter extends RecyclerView.Adapter {
     @SuppressLint("RestrictedApi")
     @Override
     public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
-
+        
+        username.findViewById(R.id.profile_username);
         User user=muser.get(position);
         holder.username.setText(user.getUid());
 
