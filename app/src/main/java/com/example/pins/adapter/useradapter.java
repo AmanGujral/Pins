@@ -30,7 +30,6 @@ public class useradapter extends RecyclerView.Adapter {
     {
         this.muser=muser;
         this.mcontext=mcontext;
-
     }
 
     @NonNull

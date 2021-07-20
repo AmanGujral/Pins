@@ -9,6 +9,8 @@ import android.os.Bundle;
 
 import com.example.pins.models.UserMessage;
 import com.example.pins.structures.MessageAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,6 +25,9 @@ public class MessagesActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ArrayList<UserMessage> userMessageArrayList;
     MessageAdapter messageAdapter;
+
+    FirebaseAuth mAuth;
+    FirebaseUser user;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -39,6 +44,8 @@ public class MessagesActivity extends AppCompatActivity {
 
         ChangeListner();
 
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
     }
 
     private void ChangeListner() {
@@ -49,9 +56,11 @@ public class MessagesActivity extends AppCompatActivity {
                         userMessageArrayList =new ArrayList<UserMessage>();
                         messageAdapter = new MessageAdapter(MessagesActivity.this,userMessageArrayList);
                         for (DocumentChange dc :value.getDocumentChanges()){
-                            if(dc.getType() == DocumentChange.Type.ADDED){
+                            if(dc.getType() == DocumentChange.Type.ADDED ){
 
-                                userMessageArrayList.add(dc.getDocument().toObject(UserMessage.class));
+                                if(!(user.getUid().equals(dc.getDocument().getId()))) {
+                                    userMessageArrayList.add(dc.getDocument().toObject(UserMessage.class));
+                                }
 
                             }
                             messageAdapter.notifyDataSetChanged();
