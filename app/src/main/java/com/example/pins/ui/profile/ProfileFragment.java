@@ -1,6 +1,7 @@
 package com.example.pins.ui.profile;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -88,16 +89,21 @@ public class ProfileFragment extends Fragment {
     }
 
     private void choosepic() {
-        Intent intent = new Intent();
-        intent.setType("image");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent,1);
+
+        try {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(intent,1);
+        }catch (ActivityNotFoundException e){
+            Toast.makeText(getContext(), "Image browser intent error", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==1 && resultCode==1 && data!=null && data.getData()!=null) {
+        if (requestCode==1 && resultCode==-1 && data!=null && data.getData()!=null) {
             imguri = data.getData();
             profilepic.setImageURI(imguri);
             uploadpic();
