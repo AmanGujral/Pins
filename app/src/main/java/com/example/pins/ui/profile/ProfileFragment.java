@@ -133,8 +133,23 @@ public class ProfileFragment extends Fragment {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(getContext(), "Upload Successful", Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
-                Task<Uri> DwnUri= upldref.getDownloadUrl();
-                firebaseInst.collection("Users").document(userInstance.getUserid()).set(DwnUri, SetOptions.merge());
+                Task<Uri> dwnUrl=upldref.getDownloadUrl();
+                try {
+                    userInstance.setImageUrl(dwnUrl.toString());
+                    UserModel userModel = new UserModel(
+                            userInstance.getUserid(),
+                            userInstance.getFirstname(),
+                            userInstance.getLastname(),
+                            userInstance.getEmail(),
+                            userInstance.getRole(),
+                            userInstance.getImageUrl(),
+                            userInstance.getCurrentProjectId(),
+                            userInstance.getAllProjects()
+                    );
+                    firebaseInst.collection("Users").document(userInstance.getUserid()).set(userInstance, SetOptions.merge());
+                }catch (NullPointerException e){
+                    Toast.makeText(getContext(), "upload to firestore unsuccessful", Toast.LENGTH_LONG).show();
+                };
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
