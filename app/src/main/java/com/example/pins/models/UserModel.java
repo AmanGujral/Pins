@@ -1,5 +1,7 @@
 package com.example.pins.models;
 
+import android.net.Uri;
+
 import java.util.List;
 
 public class UserModel {

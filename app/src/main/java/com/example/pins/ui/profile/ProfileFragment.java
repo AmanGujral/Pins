@@ -18,12 +18,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.pins.R;
 import com.example.pins.databinding.FragmentProfileBinding;
 import com.example.pins.models.UserModel;
 import com.example.pins.ui.sign_in.SignInActivity;
+import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -31,6 +34,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -46,6 +50,7 @@ public class ProfileFragment extends Fragment {
     private ImageView profilepic;
     Button logoutBtn;
     public Uri imguri;
+    FirebaseFirestore firebaseInst = FirebaseFirestore.getInstance();
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
@@ -69,6 +74,11 @@ public class ProfileFragment extends Fragment {
         String fullname = userInstance.getFirstname() + " " + userInstance.getLastname();
         usernameTv.setText(fullname);
         emailTv.setText(userInstance.getEmail());
+        if (userInstance.getImageUrl()==""){
+            Glide.with(this).load(R.drawable.profiledefault).into(profilepic);
+        }else {
+            Glide.with(this).load(userInstance.getImageUrl()).into(profilepic);
+        }
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,15 +125,16 @@ public class ProfileFragment extends Fragment {
         progressDialog.setTitle("Uploading Image");
         progressDialog.show();
 
-        final String randkey = UUID.randomUUID().toString();
-        StorageReference upldref = storageReference.child("image/" + randkey);
+        String userid= userInstance.getUserid();
+        StorageReference upldref = storageReference.child("Profile_Pictures" + userid);
 
         upldref.putFile(imguri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(getContext(), "Upload Successful", Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
-
+                Task<Uri> DwnUri= upldref.getDownloadUrl();
+                firebaseInst.collection("Users").document(userInstance.getUserid()).set(DwnUri, SetOptions.merge());
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
