@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.pins.R;
 import com.example.pins.databinding.FragmentProfileBinding;
 import com.example.pins.models.UserModel;
@@ -76,10 +77,10 @@ public class ProfileFragment extends Fragment {
         String fullname = userInstance.getFirstname() + " " + userInstance.getLastname();
         usernameTv.setText(fullname);
         emailTv.setText(userInstance.getEmail());
-        if (userInstance.getImageUrl()==""){
-            Glide.with(this).load(R.drawable.profiledefault).into(profilepic);
-        }else {
-            Glide.with(this).load(userInstance.getImageUrl()).into(profilepic);
+        RequestOptions options = new RequestOptions().placeholder(R.drawable.profiledefault);
+        if (userInstance.getImageUrl()!=null){
+            String loadingimg = userInstance.getImageUrl();
+            Glide.with(this).load(loadingimg).apply(options).into(profilepic);
         }
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
