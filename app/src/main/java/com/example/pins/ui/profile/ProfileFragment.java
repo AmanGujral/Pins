@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ProfileFragment extends Fragment {
@@ -50,7 +53,6 @@ public class ProfileFragment extends Fragment {
     private ImageView profilepic;
     Button logoutBtn;
     public Uri imguri;
-    FirebaseFirestore firebaseInst = FirebaseFirestore.getInstance();
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
@@ -126,30 +128,34 @@ public class ProfileFragment extends Fragment {
         progressDialog.show();
 
         String userid= userInstance.getUserid();
-        StorageReference upldref = storageReference.child("Profile_Pictures" + userid);
+        StorageReference upldref = storageReference.child("Profile_Pictures/" + userid);
 
         upldref.putFile(imguri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(getContext(), "Upload Successful", Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
+                String UserID = userInstance.getUserid();
                 Task<Uri> dwnUrl=upldref.getDownloadUrl();
-                try {
-                    userInstance.setImageUrl(dwnUrl.toString());
-                    UserModel userModel = new UserModel(
-                            userInstance.getUserid(),
-                            userInstance.getFirstname(),
-                            userInstance.getLastname(),
-                            userInstance.getEmail(),
-                            userInstance.getRole(),
-                            userInstance.getImageUrl(),
-                            userInstance.getCurrentProjectId(),
-                            userInstance.getAllProjects()
-                    );
-                    firebaseInst.collection("Users").document(userInstance.getUserid()).set(userInstance, SetOptions.merge());
-                }catch (NullPointerException e){
-                    Toast.makeText(getContext(), "upload to firestore unsuccessful", Toast.LENGTH_LONG).show();
-                };
+                if (userInstance.getImageUrl()!=null){
+                    DocumentReference documentReference = FirebaseFirestore.getInstance().collection("Users").document(UserID);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("imgUrl", dwnUrl.toString());
+
+                    documentReference.update(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getContext(), "Firestore Uploaded", Toast.LENGTH_LONG).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), "Upload to Firestore failed", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }else{
+                    Toast.makeText(getContext(), "url is null", Toast.LENGTH_LONG).show();
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
