@@ -82,7 +82,7 @@ public class ProfileFragment extends Fragment {
         String fullname = userInstance.getFirstname() + " " + userInstance.getLastname();
         usernameTv.setText(fullname);
         emailTv.setText(userInstance.getEmail());
-        Picasso.get().load(userInstance.getImageUrl()).into(profilepic);
+        Picasso.get().load(userInstance.getImageUrl()).fit().placeholder(R.drawable.profiledefault).into(profilepic);
         String temp = userInstance.getImageUrl();
         Log.d(TAG, "onCreateView: Url fetched from database: "+ temp);
         logoutBtn.setOnClickListener(new View.OnClickListener() {
