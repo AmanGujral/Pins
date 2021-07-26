@@ -68,7 +68,6 @@ public class ProfileFragment extends Fragment {
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
         storage= FirebaseStorage.getInstance();
         storageReference=storage.getReference();
 
@@ -76,19 +75,16 @@ public class ProfileFragment extends Fragment {
         usernameTv = binding.profileUsername;
         emailTv = binding.profileEmail;
         profilepic= binding.profileImage;
-        userInstance = UserModel.getUserInstance();
 
+        userInstance = UserModel.getUserInstance();
+        String dwnldLink=userInstance.getImageUrl();
+        Toast.makeText(getContext(), "link: "+ dwnldLink, Toast.LENGTH_LONG).show();
         String fullname = userInstance.getFirstname() + " " + userInstance.getLastname();
         usernameTv.setText(fullname);
         emailTv.setText(userInstance.getEmail());
-       /* if (userInstance.getImageUrl()!=null){
-            RequestOptions options = new RequestOptions().placeholder(R.drawable.profiledefault);
-            String loadingimg = userInstance.getImageUrl();
-            Glide.with(this).load(loadingimg).apply(options).override(600,200).into(profilepic);
-
-        }*/
         Picasso.get().load(userInstance.getImageUrl()).into(profilepic);
-
+        String temp = userInstance.getImageUrl();
+        Log.d(TAG, "onCreateView: Url fetched from database: "+ temp);
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,6 +102,7 @@ public class ProfileFragment extends Fragment {
 
         return root;
     }
+
 
     private void choosepic() {
 
@@ -126,9 +123,11 @@ public class ProfileFragment extends Fragment {
             imguri = data.getData();
             profilepic.setImageURI(imguri);
             uploadpic();
+            Glide.with(requireContext()).load(userInstance.getImageUrl()).into(profilepic);
         }
     }
 
+    //method to upload data picture selected by user to firestore and updating imgurl in database
     private void uploadpic() {
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setTitle("Uploading Image");
@@ -147,10 +146,11 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onSuccess(Uri uri) {
                         String imgLink = uri.toString();
+                        Log.d(TAG, "onSuccess: img link: "+ imgLink);
                         if (userInstance.getImageUrl()!=null){
                             DocumentReference documentReference = FirebaseFirestore.getInstance().collection("Users").document(userInstance.getUserid());
                             Map<String, Object> map = new HashMap<>();
-                            map.put("imgUrl", imgLink);
+                            map.put("imageUrl", imgLink);
 
                             documentReference.update(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -168,9 +168,6 @@ public class ProfileFragment extends Fragment {
                         }
                     }
                 });
-
-                StorageReference mRef = FirebaseStorage.getInstance().getReference("Profile_Pictures/");
-                String UserID = userInstance.getUserid();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
