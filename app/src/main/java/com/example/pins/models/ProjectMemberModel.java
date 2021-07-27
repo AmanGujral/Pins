@@ -1,7 +1,8 @@
 package com.example.pins.models;
 
 public class ProjectMemberModel {
-    private String userid;
+    public static String userid;
+
     private String firstname;
     private String lastname;
     private String email;
