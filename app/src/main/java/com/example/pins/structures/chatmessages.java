@@ -1,51 +1,30 @@
 package com.example.pins.structures;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pins.R;
-import com.example.pins.databinding.ItemReceivedBinding;
-import com.example.pins.databinding.ItemSentBinding;
-import com.example.pins.models.ProjectMemberModel;
 import com.example.pins.models.UserModel;
-import com.example.pins.ui.HomeActivity;
 import com.example.pins.ui.message.message;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
-public class chatmessages<bundle> extends AppCompatActivity {
+public class chatmessages<bundle> extends AppCompatActivity implements ContactAdapter.ItemClickListener, ProjectAdapter.ItemClickListener {
 
     UserModel userModel = UserModel.getUserInstance();
     ArrayList<message> messageList = new ArrayList<message>();
@@ -57,7 +36,7 @@ public class chatmessages<bundle> extends AppCompatActivity {
     ImageButton ib;
     EditText et;
     RecyclerView messagesRecyclerView;
-    MessageAdapter messageAdapter;
+    ContactAdapter contactAdapter;
     private String userid = userModel.getUserid();
     private String username;
 
@@ -86,7 +65,7 @@ public class chatmessages<bundle> extends AppCompatActivity {
 
 
 
-        db.collection(HomeActivity.PROJECTS_COLLECTION_PATH)
+        /*db.collection(HomeActivity.PROJECTS_COLLECTION_PATH)
                 .document(userModel.getCurrentProjectId())
                 .collection(HomeActivity.CHAT_COLLECTION_PATH)
                 .document(userModel.getUserid().concat(ProjectMemberModel.userid))
@@ -114,9 +93,9 @@ public class chatmessages<bundle> extends AppCompatActivity {
 
 
                 });
-
-        messageAdapter = new MessageAdapter(getApplicationContext(), messageAdapter.userMessageArrayList);
-        messagesRecyclerView.setAdapter(messageAdapter);
+*/
+        contactAdapter = new ContactAdapter(getApplicationContext(), contactAdapter.contactList, chatmessages.this);
+        messagesRecyclerView.setAdapter(contactAdapter);
 
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,11 +109,11 @@ public class chatmessages<bundle> extends AppCompatActivity {
                     message newReceivedMsg = new message(et.getText().toString(), Timestamp.now(), date, false);
 
                     messageList.add(newSentMsg);
-                    messageAdapter.notifyDataSetChanged();
+                    contactAdapter.notifyDataSetChanged();
 
 
                     //Send message to our db
-                    db.collection(HomeActivity.PROJECTS_COLLECTION_PATH)
+                    /*db.collection(HomeActivity.PROJECTS_COLLECTION_PATH)
                             .document(userModel.getCurrentProjectId())
                             .collection(HomeActivity.CHAT_COLLECTION_PATH)
                             .document(userModel.getUserid() + ProjectMemberModel.userid)
@@ -151,7 +130,7 @@ public class chatmessages<bundle> extends AppCompatActivity {
                                 public void onFailure(@NonNull Exception e) {
                                     Log.e("Message not sent: ", e.toString());
                                 }
-                            });
+                            });*/
                     /*Send message to contact's db
                     db.collection(HomeActivity.PROJECTS_COLLECTION_PATH)
                             .document(userModel.getCurrentProjectId())
@@ -295,5 +274,10 @@ ItemReceivedBinding binding;
 
             }
         });
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+
     }
 }

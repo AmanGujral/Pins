@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pins.NoActionBar">
         <activity android:name=".ChatActivity"></activity>
-        <activity android:name=".MessagesActivity" />
+        <activity android:name=".ui.all_chats.AllChatsActivity" />
         <activity android:name=".ui.message.messageactivity" />
         <activity
             android:name=".ui.logo.LogoActivity"

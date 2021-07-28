@@ -9,9 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -19,12 +16,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pins.MessagesActivity;
+import com.example.pins.ui.all_chats.AllChatsActivity;
 import com.example.pins.R;
 import com.example.pins.databinding.FragmentMyboardBinding;
 import com.example.pins.models.ProjectModel;
@@ -46,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickListener {
 
@@ -135,7 +130,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         messages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), MessagesActivity.class));
+                startActivity(new Intent(requireContext(), AllChatsActivity.class));
             }
         });
 

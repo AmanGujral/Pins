@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pins.R;
+import com.example.pins.models.ContactModel;
 import com.example.pins.models.ProjectMemberModel;
 import com.example.pins.models.ProjectModel;
 import com.example.pins.models.UserModel;
@@ -52,6 +53,8 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
 
     List<ProjectModel> allProjects = new ArrayList<>();
     List<ProjectModel> searchedProjects = new ArrayList<>();
+    List<ProjectMemberModel> projectMembers = new ArrayList<>();
+    List<ContactModel> contactList = new ArrayList<>();
     String query = "";
 
     ProjectAdapter adapter;
@@ -291,9 +294,11 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
         }
         allProjects.add(project.getProjectId());
 
+        // Update current user info such as currentProjectId
         userInstance.setAllProjects(allProjects);
         userInstance.setCurrentProjectId(project.getProjectId());
 
+        // Create Project member model object for current user
         ProjectMemberModel projectMember = new ProjectMemberModel(
                 userInstance.getUserid(),
                 userInstance.getFirstname(),
@@ -303,10 +308,58 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
                 userInstance.getImageUrl()
         );
 
+        // Update Current User Data in DB
         firestoreInstance.collection("Users")
                 .document(userInstance.getUserid())
                 .set(userInstance, SetOptions.merge());
 
+        // Get all project members and add to contactList + Add current user as a contact to all other project members
+        firestoreInstance.collection("Projects")
+                .document(project.getProjectId())
+                .collection("Project Members")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful() && task.getResult() != null) {
+                            ContactModel currentUserContact = new ContactModel(
+                                    userInstance.getUserid(),
+                                    userInstance.getFirstname(),
+                                    userInstance.getLastname(),
+                                    userInstance.getImageUrl(),
+                                    "",
+                                    "",
+                                    0L,
+                                    true
+                            );
+                            for(QueryDocumentSnapshot doc : task.getResult()) {
+                                projectMembers.add(doc.toObject(ProjectMemberModel.class));
+                            }
+                            for(ProjectMemberModel projectMemberModel : projectMembers) {
+                                firestoreInstance.collection("Projects")
+                                        .document(project.getProjectId())
+                                        .collection("Project Members")
+                                        .document(projectMemberModel.getUserid())
+                                        .collection("Contacts")
+                                        .document(userInstance.getUserid())
+                                        .set(currentUserContact, SetOptions.merge());
+                                ContactModel contact = new ContactModel(
+                                        projectMemberModel.getUserid(),
+                                        projectMemberModel.getFirstname(),
+                                        projectMemberModel.getLastname(),
+                                        projectMemberModel.getImageUrl(),
+                                        "",
+                                        "",
+                                        0L,
+                                        true
+                                );
+                                contactList.add(contact);
+                            }
+                        }
+                    }
+                });
+
+        // Add the user to Project Members + Add all other project members as Contacts to the current user
         firestoreInstance.collection("Projects")
                 .document(project.getProjectId())
                 .collection("Project Members")
@@ -316,6 +369,15 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
                     @Override
                     public void onComplete(@NonNull @NotNull Task<Void> task) {
                         if(task.isSuccessful()) {
+                            for(ContactModel contact : contactList) {
+                                firestoreInstance.collection("Projects")
+                                        .document(project.getProjectId())
+                                        .collection("Project Members")
+                                        .document(userInstance.getUserid())
+                                        .collection("Contacts")
+                                        .document(contact.getUserid())
+                                        .set(contact, SetOptions.merge());
+                            }
                             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                             finish();
                         }

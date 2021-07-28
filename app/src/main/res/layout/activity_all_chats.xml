@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="20dp"
+    android:paddingBottom="40dp"
+    tools:context=".ui.all_chats.AllChatsActivity"
+    android:id="@+id/activity_all_chats_parent">
+
+    <LinearLayout
+        android:id="@+id/activity_all_chats_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chats"
+            android:textSize="44sp"
+            android:textColor="@color/medium_grey"
+            android:fontFamily="sans-serif-black"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/activity_all_chats_close_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close_24"
+            android:scaleY="1.4"
+            android:scaleX="1.4"
+            android:background="@color/transparent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="4dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/activity_all_chats_project_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Project Name"
+        android:textSize="24sp"
+        android:textColor="@color/green"
+        android:fontFamily="sans-serif-light"
+        android:layout_below="@id/activity_all_chats_title"
+        android:paddingHorizontal="20dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_all_chats_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_all_chats_project_name"
+        android:layout_marginTop="40dp"
+        tools:listitem="@layout/widget_contact_container"
+        android:visibility="visible"/>
+
+    <RelativeLayout
+        android:id="@+id/activity_all_chats_error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/activity_all_chats_project_name"
+        android:paddingHorizontal="20dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chat Unavailable!"
+            android:textSize="22sp"
+            android:textColor="@color/dark_grey"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
