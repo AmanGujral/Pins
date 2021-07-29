@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pins.R;
 import com.example.pins.models.TaskModel;
+import com.example.pins.ui.team_board.TeamBoardFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskAdapterVie
         this.clickListener = listener;
         this.inflater = LayoutInflater.from(context);
     }
+
+
 
 
     @NonNull

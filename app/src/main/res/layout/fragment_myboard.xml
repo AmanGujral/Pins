@@ -134,6 +134,12 @@
         android:layout_below="@id/fragment_myboard_searchbar_layout"
         android:visibility="gone">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myBoardRecycler"
+            android:layout_width="500dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            />
     </RelativeLayout>
 
     <!--Board Layout-->
@@ -145,6 +151,8 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="60dp"
         android:visibility="visible">
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -221,6 +229,7 @@
 
                 </RelativeLayout>
 
+
             </LinearLayout>
 
 
@@ -258,6 +267,7 @@
                         android:rotation="90"/>
 
                 </RelativeLayout>
+
 
             </LinearLayout>
 
@@ -370,6 +380,8 @@
         </LinearLayout>
 
     </RelativeLayout>
+
+
 
 
 </RelativeLayout>

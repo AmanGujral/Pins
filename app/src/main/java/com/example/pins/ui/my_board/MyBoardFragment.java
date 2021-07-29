@@ -70,10 +70,14 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     RecyclerView todoRecyclerview;
     RecyclerView doingRecyclerview;
     RecyclerView doneRecyclerview;
+    RecyclerView tasksRecyclerView;
 
     TaskAdapter todoTaskAdapter;
     TaskAdapter doingTaskAdapter;
     TaskAdapter doneTaskAdapter;
+    TaskAdapter taskRecyclerAdapter;
+
+    FirebaseFirestore firestoreInstance = FirebaseFirestore.getInstance();
 
     UserModel userInstance;
     ProjectModel currentProject;
@@ -81,6 +85,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     List<TaskModel> todoTaskList = new ArrayList<>();
     List<TaskModel> doingTaskList = new ArrayList<>();
     List<TaskModel> doneTaskList = new ArrayList<>();
+    List<TaskModel> taskRecyclerList = new ArrayList<>();
     String query = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -88,6 +93,9 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
 
         binding = FragmentMyboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+
+
 
         projectName = binding.fragmentMyboardProjectName;
         errorMsgLayout = binding.fragmentMyboardErrorMsg;
@@ -107,6 +115,8 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         todoExpandBtn = binding.fragmentMyboardTodoExpandBtn;
         doingExpandBtn = binding.fragmentMyboardDoingExpandBtn;
         doneExpandBtn = binding.fragmentMyboardDoneExpandBtn;
+        //recyclers
+        tasksRecyclerView = binding.myBoardRecycler;
         todoRecyclerview = binding.fragmentMyboardTodoRecyclerview;
         doingRecyclerview = binding.fragmentMyboardDoingRecyclerview;
         doneRecyclerview = binding.fragmentMyboardDoneRecyclerview;
@@ -138,7 +148,9 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
                 if(!query.equalsIgnoreCase("")){
                     searchBtn.setVisibility(View.GONE);
                     closeSearchBtn.setVisibility(View.VISIBLE);
-                    //searchProjects(query);
+                    boardLayout.setVisibility(View.GONE);
+                    searchLayout.setVisibility(View.VISIBLE);
+                    searchTasks(query);
                 }
                 else {
                     searchBtn.setVisibility(View.VISIBLE);
@@ -174,6 +186,8 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
             @Override
             public void onClick(View view) {
                 searchField.setText("");
+                searchLayout.setVisibility(View.GONE);
+                boardLayout.setVisibility(View.VISIBLE);
             }
         });
 
@@ -206,6 +220,30 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         });
 
         return root;
+    }
+
+    private void searchTasks(String query) {
+        tasksRecyclerView.setVisibility(View.VISIBLE);
+        firestoreInstance.collection("Projects")
+        .document(currentProject.getProjectId())
+                .collection("Tasks")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful() && task.getResult() != null) {
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                taskRecyclerList.add(doc.toObject(TaskModel.class));
+                            }
+                            tasksRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+
+                            taskRecyclerAdapter = new TaskAdapter(getContext(),taskRecyclerList,MyBoardFragment.this);
+
+                            tasksRecyclerView.setAdapter(taskRecyclerAdapter);
+                        }
+                    }
+                });
+
     }
 
     @Override
