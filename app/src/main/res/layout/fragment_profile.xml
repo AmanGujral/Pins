@@ -7,7 +7,8 @@
     tools:context=".ui.profile.ProfileFragment"
     android:paddingHorizontal="20dp"
     android:paddingBottom="80dp"
-    android:paddingTop="20dp">
+    android:paddingTop="20dp"
+    android:id="@+id/fragment_profile_parent">
 
     <LinearLayout
         android:id="@+id/fragment_profile_title"
@@ -28,8 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_chat_24"
-            android:scaleY="1.5"
-            android:scaleX="1.5"
+            android:scaleY="1.4"
+            android:scaleX="1.4"
             android:background="@color/transparent"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="4dp"/>
@@ -41,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Username"
-        android:textSize="34sp"
+        android:textSize="24sp"
         android:textColor="@color/green"
         android:fontFamily="sans-serif-light"
         android:layout_below="@id/fragment_profile_title" />
@@ -51,43 +52,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/profile_username"
-        android:layout_marginTop="14dp"
         android:fontFamily="sans-serif-light"
         android:text="Email"
         android:textColor="@color/green"
-        android:textSize="24sp" />
+        android:textSize="20sp" />
 
-    <ImageView
-        android:id="@+id/profile_image"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_below="@id/profile_email"
-        android:layout_marginTop="39dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_profile_24" />
-
-    <Button
-        android:id="@+id/logout_btn"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/profile_image_cv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        android:layout_alignParentBottom="true"
+        app:cardCornerRadius="50dp"
+        app:cardElevation="20dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"/>
+        android:layout_below="@id/profile_email"
+        android:layout_marginTop="30dp">
+
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="300dp"
+            android:layout_height="250dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_profile_24" />
+
+    </androidx.cardview.widget.CardView>
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/fragment_profile_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/logout_btn"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="516dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="63dp"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dropdown"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/profile_image_cv"/>
 
 </RelativeLayout>
 

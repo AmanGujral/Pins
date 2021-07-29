@@ -39,6 +39,11 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity implements SidePanelProjectAdapter.ItemClickListener{
 
     private ActivityHomeBinding binding;
+    public static final String USERS_COLLECTION_PATH = "users";
+    public static final String CHAT_COLLECTION_PATH = "chatroom";
+    public static final String MESSAGES_COLLECTION_PATH = "messages";
+    public static final String PROJECTS_COLLECTION_PATH="Projects";
+    public static final String LAST_MSG_PATH = "lastMsg";
 
     ImageButton hidePanelBtn;
     ImageButton showPanelBtn;

@@ -1,54 +1,60 @@
 package com.example.pins.ui.profile;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.pins.R;
 import com.example.pins.databinding.FragmentProfileBinding;
 import com.example.pins.models.UserModel;
-import com.example.pins.ui.sign_in.SignInActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.net.URL;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 public class ProfileFragment extends Fragment {
 
-    private FragmentProfileBinding binding;
-    private TextView usernameTv, emailTv;
-    private ImageView profilepic;
-    Button logoutBtn;
-    public Uri imguri;
-    private FirebaseStorage storage;
-    private StorageReference storageReference;
+    private static final int SELECT_IMAGE = 1;
 
-    UserModel userInstance;
+    private FragmentProfileBinding binding;
+    TextView usernameTv;
+    TextView emailTv;
+    ImageView profileImageView;
+    Spinner projectSpinner;
+    RelativeLayout parentLayout;
+    FirebaseFirestore firestoreInst = FirebaseFirestore.getInstance();
+
+    UserModel userInstance = UserModel.getUserInstance();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -56,82 +62,129 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        storage= FirebaseStorage.getInstance();
-        storageReference=storage.getReference();
-
-        logoutBtn = binding.logoutBtn;
         usernameTv = binding.profileUsername;
         emailTv = binding.profileEmail;
-        profilepic= binding.profileImage;
-        userInstance = UserModel.getUserInstance();
+        profileImageView = binding.profileImage;
+        projectSpinner = binding.fragmentProfileSpinner;
+        parentLayout = binding.fragmentProfileParent;
 
-        String fullname = userInstance.getFirstname() + " " + userInstance.getLastname();
-        usernameTv.setText(fullname);
+        String fullName = userInstance.getFirstname() + " " + userInstance.getLastname();
+        usernameTv.setText(fullName);
         emailTv.setText(userInstance.getEmail());
 
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
+        Glide.with(this)
+                .load(userInstance.getImageUrl())
+                .centerCrop()
+                .placeholder(R.drawable.profiledefault)
+                .into(profileImageView);
+
+        //loading data into the spinner
+        CollectionReference collectionReference = firestoreInst.collection(userInstance.getUserid());
+        List<String> projects = new ArrayList<>();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, projects);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        projectSpinner.setAdapter(adapter);
+        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getActivity().getApplicationContext(), SignInActivity.class));
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    for(QueryDocumentSnapshot documentSnapshot: task.getResult()){
+                        String project = documentSnapshot.getString("allProjects");
+                        projects.add(project);
+                        Log.d(TAG, "onComplete: array values: " + project);
+                    }
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
+    // end of spinner code
 
-        profilepic.setOnClickListener(new View.OnClickListener() {
+        profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                choosepic();
+                chooseImage();
             }
         });
 
         return root;
     }
 
-    private void choosepic() {
-        Intent intent = new Intent();
-        intent.setType("image");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent,1);
+
+    private void chooseImage() {
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"),SELECT_IMAGE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==1 && resultCode==1 && data!=null && data.getData()!=null) {
-            imguri = data.getData();
-            profilepic.setImageURI(imguri);
-            uploadpic();
+        if (requestCode == SELECT_IMAGE) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data != null) {
+                    Uri file = data.getData();
+                    uploadImage(file);
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED)  {
+                Snackbar.make(parentLayout, "Cancelled", Snackbar.LENGTH_SHORT)
+                        .setBackgroundTint(getResources().getColor(R.color.green_dark))
+                        .show();
+            }
         }
     }
 
-    private void uploadpic() {
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+    //method to upload data picture selected by user to firestore and updating imgurl in database
+    private void uploadImage(Uri file) {
+        final ProgressDialog progressDialog = new ProgressDialog(requireContext());
         progressDialog.setTitle("Uploading Image");
         progressDialog.show();
 
-        final String randkey = UUID.randomUUID().toString();
-        StorageReference upldref = storageReference.child("image/" + randkey);
+        //String storagePath = "Profile_Pictures/" + userInstance.getUserid() + "/" + file.getLastPathSegment() + ".jpg";
+        String storagePath = "Profile_Pictures/" + userInstance.getUserid();
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(storagePath);
 
-        upldref.putFile(imguri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(getContext(), "Upload Successful", Toast.LENGTH_LONG).show();
-                progressDialog.dismiss();
+        UploadTask uploadTask = storageRef.putFile(file);
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+        uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText((getContext()),"Upload Failed", Toast.LENGTH_LONG);
                 progressDialog.dismiss();
+                Snackbar.make(parentLayout, e.getMessage(), Snackbar.LENGTH_SHORT)
+                        .setBackgroundTint(getResources().getColor(R.color.green_dark))
+                        .show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        userInstance.setImageUrl(uri.toString());
+                        FirebaseFirestore.getInstance().collection("Users")
+                                .document(userInstance.getUserid())
+                                .update("imageUrl", userInstance.getImageUrl())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        progressDialog.dismiss();
+                                        Glide.with(requireContext())
+                                                .load(userInstance.getImageUrl())
+                                                .centerCrop()
+                                                .placeholder(R.drawable.profiledefault)
+                                                .into(profileImageView);
+                                    }
+                                });
+                    }
+                });
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                double ProgPercent = (100 * snapshot.getBytesTransferred()/ snapshot.getTotalByteCount());
+                double ProgPercent = (snapshot.getBytesTransferred()/ snapshot.getTotalByteCount()) * 100;
                 progressDialog.setMessage("Percentage: " + ProgPercent + "%");
             }
         });
-        }
     }
+}
 

@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/Optimization/language/languageUpdate.php
+/email_test.php
