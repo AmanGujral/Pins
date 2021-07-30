@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.example.pins.R;
 import com.example.pins.models.UserModel;
 import com.example.pins.ui.onboarding.OnboardingActivity;
+import com.example.pins.ui.project_search.ManagerProjectSearch;
 import com.example.pins.ui.project_search.ProjectSearchActivity;
 import com.example.pins.ui.sign_in.SignInActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,7 +32,7 @@ public class SignUpActivity extends AppCompatActivity {
     TextInputLayout firstname_til,lastname_til,email_til,password_til;
     TextInputEditText firstname_tie,lastname_tie,email_tie,password_tie;
 
-    Button SignUp;
+    Button SignUp, ManagerLogin;
     TextView SignIn;
 
     RelativeLayout parentLayout;
@@ -57,6 +58,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         SignUp = findViewById(R.id.signup_btn);
         SignIn = findViewById(R.id.signup_signin_btn);
+
+        //Manager Login
+        ManagerLogin=findViewById(R.id.ManagerLoginBtn);
+
 
         parentLayout = findViewById(R.id.activity_signup_layout);
 
@@ -141,7 +146,13 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
         });
-
+        ManagerLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SignUpActivity.this, ManagerProjectSearch.class));
+                finish();
+            }
+        });
     }
 
     private void clearErrors(){
