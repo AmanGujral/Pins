@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManagerProjectSearch extends AppCompatActivity implements ProjectAdapter.ItemClickListener {
+    private static final String TAG = null;
     ImageButton McloseBtn;
     ImageButton MsearchBtn;
     ImageButton McloseSearchBtn;
@@ -255,7 +256,7 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
         TextView projectName = dialogView.findViewById(R.id.alert_dialog_auth_project_name_tv);
         TextView projectManager = dialogView.findViewById(R.id.alert_dialog_auth_project_manager_tv);
         Button noBtn = dialogView.findViewById(R.id.alert_dialog_auth_no_btn);
-        Button yesBtn = dialogView.findViewById(R.id.alert_dialog_auth_yes_btn);
+        Button yesBtn = dialogView.findViewById(R.id.alert_dialog_Auth_yes_btn);
 
         projectCode.setText(Project.getProjectCode());
         projectName.setText(Project.getProjectName());
@@ -265,6 +266,24 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
         alertDialog = alertDialogBuilder.create();
         alertDialog.setCancelable(true);
         alertDialog.show();
+
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_LONG);
+                firestoreInstance.collection("Authorization Codes").document(Project.getProjectCode()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if ((documentSnapshot.exists())) {
+                            String VerifyCode=documentSnapshot.get("code").toString();
+                            if (VerifyCode.equals(AuthCode)){
+                                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_SHORT);
+                            }
+                        }
+                    }
+                });
+            }
+        });
 
         /*firestoreInstance.collection("Authorization Codes")
                 .document(Project.getProjectCode())
@@ -285,21 +304,6 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT);
-            }
-        });*/
-
-
-        /*yesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        noBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
             }
         });*/
 
