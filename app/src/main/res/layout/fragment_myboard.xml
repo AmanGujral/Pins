@@ -26,6 +26,17 @@
             android:layout_weight="1"/>
 
         <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_profile_24"
+            android:background="@color/transparent"
+            android:scaleY="1.4"
+            android:scaleX="1.4"
+            android:id="@+id/requests"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="20dp"
+            />
+        <ImageButton
             android:id="@+id/fragment_myboard_msg_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -134,6 +145,12 @@
         android:layout_below="@id/fragment_myboard_searchbar_layout"
         android:visibility="gone">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myBoardRecycler"
+            android:layout_width="500dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            />
     </RelativeLayout>
 
     <!--Board Layout-->
@@ -145,6 +162,8 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="60dp"
         android:visibility="visible">
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -221,6 +240,7 @@
 
                 </RelativeLayout>
 
+
             </LinearLayout>
 
 
@@ -258,6 +278,7 @@
                         android:rotation="90"/>
 
                 </RelativeLayout>
+
 
             </LinearLayout>
 
@@ -370,6 +391,8 @@
         </LinearLayout>
 
     </RelativeLayout>
+
+
 
 
 </RelativeLayout>

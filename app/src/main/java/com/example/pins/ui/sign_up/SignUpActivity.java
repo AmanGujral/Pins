@@ -31,7 +31,7 @@ public class SignUpActivity extends AppCompatActivity {
     TextInputLayout firstname_til,lastname_til,email_til,password_til;
     TextInputEditText firstname_tie,lastname_tie,email_tie,password_tie;
 
-    Button SignUp;
+    Button SignUp, ManagerLogin;
     TextView SignIn;
 
     RelativeLayout parentLayout;
@@ -57,6 +57,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         SignUp = findViewById(R.id.signup_btn);
         SignIn = findViewById(R.id.signup_signin_btn);
+
+        //Manager Login
+        ManagerLogin=findViewById(R.id.ManagerLoginBtn);
+
 
         parentLayout = findViewById(R.id.activity_signup_layout);
 
@@ -141,7 +145,13 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
         });
-
+        ManagerLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SignUpActivity.this, ProjectSearchActivity.class));
+                finish();
+            }
+        });
     }
 
     private void clearErrors(){

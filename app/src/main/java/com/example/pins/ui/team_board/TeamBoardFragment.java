@@ -15,10 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,7 +25,6 @@ import com.example.pins.models.ProjectModel;
 import com.example.pins.models.TaskModel;
 import com.example.pins.models.UserModel;
 import com.example.pins.structures.TaskAdapter;
-import com.example.pins.ui.my_board.MyBoardFragment;
 import com.example.pins.ui.project_search.ProjectSearchActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -72,10 +68,14 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
     RecyclerView todoRecyclerview;
     RecyclerView doingRecyclerview;
     RecyclerView doneRecyclerview;
+    RecyclerView teamtaskRecyclerView;
 
     TaskAdapter todoTaskAdapter;
     TaskAdapter doingTaskAdapter;
     TaskAdapter doneTaskAdapter;
+    TaskAdapter teamTaskAdapter;
+
+    FirebaseFirestore firestoreInstance = FirebaseFirestore.getInstance();
 
     UserModel userInstance;
     ProjectModel currentProject;
@@ -83,6 +83,7 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
     List<TaskModel> todoTaskList = new ArrayList<>();
     List<TaskModel> doingTaskList = new ArrayList<>();
     List<TaskModel> doneTaskList = new ArrayList<>();
+    List<TaskModel> searchedTaskList = new ArrayList<>();
     String query = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -109,9 +110,11 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
         todoExpandBtn = binding.fragmentTeamboardTodoExpandBtn;
         doingExpandBtn = binding.fragmentTeamboardDoingExpandBtn;
         doneExpandBtn = binding.fragmentTeamboardDoneExpandBtn;
+        //recycler
         todoRecyclerview = binding.fragmentTeamboardTodoRecyclerview;
         doingRecyclerview = binding.fragmentTeamboardDoingRecyclerview;
         doneRecyclerview = binding.fragmentTeamboardDoneRecyclerview;
+        teamtaskRecyclerView = binding.myTeamBoardRecycler;
 
         userInstance = UserModel.getUserInstance();
 
@@ -132,7 +135,10 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
                 if(!query.equalsIgnoreCase("")){
                     searchBtn.setVisibility(View.GONE);
                     closeSearchBtn.setVisibility(View.VISIBLE);
+                    searchLayout.setVisibility(View.VISIBLE);
+                    boardLayout.setVisibility(View.GONE);
                     //searchProjects(query);
+                    searchTasks(query);
                 }
                 else {
                     searchBtn.setVisibility(View.VISIBLE);
@@ -168,6 +174,8 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
             @Override
             public void onClick(View view) {
                 searchField.setText("");
+                searchLayout.setVisibility(View.GONE);
+                boardLayout.setVisibility(View.VISIBLE);
             }
         });
 
@@ -201,6 +209,51 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
 
 
         return root;
+    }
+
+    private void searchTasks(String query) {
+        searchedTaskList.clear();
+        teamtaskRecyclerView.setVisibility(View.VISIBLE);
+        firestoreInstance.collection("Projects")
+                .document(currentProject.getProjectId())
+                .collection("Tasks")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                searchedTaskList.add(doc.toObject(TaskModel.class));
+                            }
+                            teamtaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+
+                            teamTaskAdapter = new TaskAdapter(getContext(), searchedTaskList,TeamBoardFragment.this);
+
+                            teamtaskRecyclerView.setAdapter(teamTaskAdapter);
+                        }
+                    }
+                });
+    }
+
+    private void searchProjects(String query) {
+        if(userInstance.getAllProjects() != null && userInstance.getAllProjects().size() != 0){
+            List<String> taskIds = userInstance.getAllProjects();
+
+            FirebaseFirestore.getInstance()
+                    .collection("Projects")
+                    .whereIn("taskId", taskIds)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful() && task.getResult() != null){
+                                for(QueryDocumentSnapshot doc : task.getResult()) {
+                                    allTaskList.add(doc.toObject(TaskModel.class));
+                                }
+                            }
+                        }
+                    });
+        }
     }
 
     public void getCurrentProject() {

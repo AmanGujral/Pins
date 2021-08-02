@@ -136,6 +136,12 @@
         android:layout_below="@id/fragment_teamboard_searchbar_layout"
         android:visibility="gone">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myTeamBoardRecycler"
+            android:layout_width="500dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            />
     </RelativeLayout>
 
 
