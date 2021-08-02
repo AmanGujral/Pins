@@ -1,6 +1,7 @@
 package com.example.pins.models;
 
 public class ProjectModel {
+
     private String projectId;           // Project ID
     private String projectName;         // Project Name
     private String projectCode;         // Project Code

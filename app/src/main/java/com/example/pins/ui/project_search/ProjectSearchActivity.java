@@ -39,7 +39,9 @@ import com.google.firebase.firestore.SetOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProjectSearchActivity extends AppCompatActivity implements ProjectAdapter.ItemClickListener {
 
@@ -268,8 +270,22 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
         yesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addProject(project);
+                //addProject(project);
+
                 alertDialog.dismiss();
+                Toast toast=Toast.makeText(getApplicationContext(),"Request Sent to Manager",Toast.LENGTH_SHORT);
+                toast.show();
+
+                Map<String, String> usermap= new HashMap<>();
+                usermap.put("projectId",project.getProjectId());
+                usermap.put("projectName",project.getProjectName());
+                usermap.put("memberid", userInstance.getUserid());
+
+                firestoreInstance.collection("Projects").
+                        document(project.getProjectId()).
+                        collection("UserRequests").add(usermap);
+
+
             }
         });
 

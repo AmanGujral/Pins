@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -29,6 +30,7 @@ import com.example.pins.models.UserModel;
 import com.example.pins.structures.NameAdapter;
 import com.example.pins.structures.TaskAdapter;
 import com.example.pins.ui.project_search.ProjectSearchActivity;
+import com.example.pins.ui.project_search.projectrequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -69,6 +71,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     ImageButton todoExpandBtn;
     ImageButton doingExpandBtn;
     ImageButton doneExpandBtn;
+    ImageButton request;
 
     RecyclerView todoRecyclerview;
     RecyclerView doingRecyclerview;
@@ -123,6 +126,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         todoExpandBtn = binding.fragmentMyboardTodoExpandBtn;
         doingExpandBtn = binding.fragmentMyboardDoingExpandBtn;
         doneExpandBtn = binding.fragmentMyboardDoneExpandBtn;
+        request=binding.requests;
         //recyclers
         tasksRecyclerView = binding.myBoardRecycler;
         todoRecyclerview = binding.fragmentMyboardTodoRecyclerview;
@@ -171,6 +175,17 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
             @Override
             public void afterTextChanged(Editable editable) {
 
+            }
+        });
+
+        request.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+Intent intent=new Intent(MyBoardFragment.this.getActivity(),projectrequest.class);
+startActivity(intent);
+
+               // Toast toast=Toast.makeText(getActivity(),"hello",Toast.LENGTH_SHORT);
+                //toast.show();
             }
         });
 

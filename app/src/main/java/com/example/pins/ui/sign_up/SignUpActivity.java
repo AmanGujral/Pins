@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.example.pins.R;
 import com.example.pins.models.UserModel;
 import com.example.pins.ui.onboarding.OnboardingActivity;
-import com.example.pins.ui.project_search.ManagerProjectSearch;
 import com.example.pins.ui.project_search.ProjectSearchActivity;
 import com.example.pins.ui.sign_in.SignInActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -149,7 +148,7 @@ public class SignUpActivity extends AppCompatActivity {
         ManagerLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(SignUpActivity.this, ManagerProjectSearch.class));
+                startActivity(new Intent(SignUpActivity.this, ProjectSearchActivity.class));
                 finish();
             }
         });
