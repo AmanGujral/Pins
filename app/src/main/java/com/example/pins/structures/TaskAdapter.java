@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pins.R;
 import com.example.pins.models.TaskModel;
-import com.example.pins.ui.team_board.TeamBoardFragment;
+import com.example.pins.models.UserModel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,15 +22,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskAdapterVie
     Context context;
     ItemClickListener clickListener;
     LayoutInflater inflater;
+    UserModel userInstance = UserModel.getUserInstance();
+    String userFullName = "";
 
     public TaskAdapter(Context context, List<TaskModel> taskList, ItemClickListener listener) {
         this.context = context;
         this.taskList = taskList;
         this.clickListener = listener;
         this.inflater = LayoutInflater.from(context);
+        userFullName = userInstance.getFirstname() + " " + userInstance.getLastname();
     }
-
-
 
 
     @NonNull
@@ -44,9 +45,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskAdapterVie
     @Override
     public void onBindViewHolder(@NonNull @NotNull TaskAdapterViewHolder holder, int position) {
         TaskModel task = taskList.get(position);
-        
+
         holder.taskName.setText(task.getTaskName());
-        holder.assignedTo.setText(task.getAssignedTo());
+        if(task.getAssignedTo().contains(userFullName)) {
+            holder.assignedTo.setText(userFullName);
+        }
+        else {
+            holder.assignedTo.setText(task.getAssignedTo().get(0));
+        }
+        if(task.getAssignedTo().size() > 1) {
+            holder.morePeopleTV.setVisibility(View.VISIBLE);
+            String numPeople = "+" + String.valueOf(task.getAssignedTo().size() - 1);
+            holder.morePeopleTV.setText(numPeople);
+        }
         holder.status.setText(task.getStatus());
         if (task.getPriority().equals(TaskModel.PRIORITY_HIGH)) {
             holder.priorityView.setBackgroundColor(context.getResources().getColor(R.color.red));
@@ -69,6 +80,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskAdapterVie
         TextView assignedTo;
         TextView status;
         View priorityView;
+        TextView morePeopleTV;
 
         public TaskAdapterViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -76,6 +88,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskAdapterVie
             assignedTo = itemView.findViewById(R.id.widget_task_container_assignedto_tv);
             status = itemView.findViewById(R.id.widget_task_container_status_tv);
             priorityView = itemView.findViewById(R.id.widget_task_container_priority_view);
+            morePeopleTV = itemView.findViewById(R.id.widget_task_container_assignedto_more_tv);
 
             itemView.setOnClickListener(this);
         }
