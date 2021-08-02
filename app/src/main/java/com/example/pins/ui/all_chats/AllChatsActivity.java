@@ -1,6 +1,7 @@
 package com.example.pins.ui.all_chats;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,9 +14,10 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.pins.models.MessageModel;
+import com.example.pins.ui.chat_room.ChatRoomActivity;
 import com.example.pins.R;
 import com.example.pins.models.ContactModel;
-import com.example.pins.models.ProjectMemberModel;
 import com.example.pins.models.ProjectModel;
 import com.example.pins.models.UserModel;
 import com.example.pins.structures.ContactAdapter;
@@ -24,7 +26,9 @@ import com.example.pins.ui.HomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -124,11 +128,40 @@ public class AllChatsActivity extends AppCompatActivity implements ContactAdapte
                     @Override
                     public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful() && task.getResult() != null) {
+                            contactList.clear();
                             for (QueryDocumentSnapshot doc : task.getResult()) {
                                 contactList.add(doc.toObject(ContactModel.class));
-                                contactsRV.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                                contactAdapter = new ContactAdapter(getApplicationContext(), contactList, AllChatsActivity.this);
-                                contactsRV.setAdapter(contactAdapter);
+                            }
+                            contactsRV.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                            contactAdapter = new ContactAdapter(getApplicationContext(), contactList, AllChatsActivity.this);
+                            contactsRV.setAdapter(contactAdapter);
+                        }
+                    }
+                });
+
+        FirebaseFirestore.getInstance()
+                .collection("Projects")
+                .document(currentProject.getProjectId())
+                .collection("Project Members")
+                .document(userInstance.getUserid())
+                .collection("Contacts")
+                .orderBy("userid")
+                .orderBy("lastMsgTimestamp")
+                .whereNotEqualTo("userid", userInstance.getUserid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot snapshot, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
+                        if(error != null) {
+                            Log.e( "Listen failed: ", error.toString());
+                            return;
+                        }
+                        if(snapshot != null) {
+                            contactList.clear();
+                            for(QueryDocumentSnapshot doc : snapshot) {
+                                contactList.add(doc.toObject(ContactModel.class));
+                            }
+                            if(contactAdapter != null) {
+                                contactAdapter.notifyDataSetChanged();
                             }
                         }
                     }
@@ -138,5 +171,8 @@ public class AllChatsActivity extends AppCompatActivity implements ContactAdapte
     @Override
     public void onItemClick(View view, int position) {
         Log.e("Contact Clicked", contactList.get(position).getFirstname());
+        Intent intent = new Intent(getApplicationContext(), ChatRoomActivity.class);
+        intent.putExtra("CONTACT_ID", contactList.get(position).getUserid());
+        startActivity(intent);
     }
 }

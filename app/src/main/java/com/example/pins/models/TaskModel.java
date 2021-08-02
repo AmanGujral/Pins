@@ -1,9 +1,11 @@
 package com.example.pins.models;
 
+import java.util.List;
+
 public class TaskModel {
     private String taskId;
     private String taskName;
-    private String assignedTo;
+    private List<String> assignedTo;
     private String status;
     private String priority;
 
@@ -20,7 +22,7 @@ public class TaskModel {
     public TaskModel(
             String taskId,
             String taskName,
-            String assignedTo,
+            List<String> assignedTo,
             String status,
             String priority
     ) {
@@ -55,11 +57,11 @@ public class TaskModel {
         this.taskName = taskName;
     }
 
-    public String getAssignedTo() {
+    public List<String> getAssignedTo() {
         return assignedTo;
     }
 
-    public void setAssignedTo(String assignedTo) {
+    public void setAssignedTo(List<String> assignedTo) {
         this.assignedTo = assignedTo;
     }
 

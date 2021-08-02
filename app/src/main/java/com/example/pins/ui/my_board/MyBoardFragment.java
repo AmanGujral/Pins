@@ -249,11 +249,14 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         doingTaskList.clear();
         doneTaskList.clear();
 
+        String userFullName = userInstance.getFirstname() + " " + userInstance.getLastname();
+
         FirebaseFirestore.getInstance()
                 .collection("Projects")
                 .document(currentProject.getProjectId())
                 .collection("Tasks")
                 .orderBy("priority")
+                .whereArrayContains("assignedTo", userFullName)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -362,10 +365,10 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     }
 
     public void showDialog(TaskModel task) {
-        List<String> nameList = new ArrayList<String>();
+        /*List<String> nameList = new ArrayList<String>();
         nameList.add("Amanpreet Singh");
         nameList.add("Ripudaman Singh");
-        nameList.add("Jagmeet Singh");
+        nameList.add("Jagmeet Singh");*/
 
         // Get current task status
         currentTaskStatus = task.getStatus();
@@ -404,7 +407,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
 
         // Set names list
         dialogRV.setLayoutManager(new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false));
-        NameAdapter nameAdapter = new NameAdapter(requireContext(), nameList);
+        NameAdapter nameAdapter = new NameAdapter(requireContext(), task.getAssignedTo());
         dialogRV.setAdapter(nameAdapter);
 
         // Set status

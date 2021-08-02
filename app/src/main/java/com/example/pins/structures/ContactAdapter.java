@@ -1,7 +1,6 @@
 package com.example.pins.structures;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.pins.ChatActivity;
 import com.example.pins.R;
 import com.example.pins.models.ContactModel;
-import com.example.pins.models.ProjectMemberModel;
-import com.example.pins.models.UserMessage;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ContactAdapter extends  RecyclerView.Adapter<ContactAdapter.MyViewHolder> {
@@ -57,11 +52,21 @@ public class ContactAdapter extends  RecyclerView.Adapter<ContactAdapter.MyViewH
         }
         holder.lastMsgTime.setText(contact.getLastMsgTime());
 
-        Glide.with(context)
-                .load(contact.getImageUrl())
-                .centerCrop()
-                .placeholder(R.drawable.ic_profile_24)
-                .into(holder.profilePic);
+        if(!contact.getImageUrl().isEmpty()) {
+            holder.initialsTV.setVisibility(View.GONE);
+            holder.profilePic.setVisibility(View.VISIBLE);
+            Glide.with(context)
+                    .load(contact.getImageUrl())
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_profile_24)
+                    .into(holder.profilePic);
+        }
+        else {
+            holder.initialsTV.setVisibility(View.VISIBLE);
+            holder.profilePic.setVisibility(View.GONE);
+
+            holder.initialsTV.setText(String.valueOf(contact.getFirstname().trim().toUpperCase().charAt(0)));
+        }
 
     }
 
@@ -77,6 +82,7 @@ public class ContactAdapter extends  RecyclerView.Adapter<ContactAdapter.MyViewH
         TextView lastName;
         TextView lastMsg;
         TextView lastMsgTime;
+        TextView initialsTV;
         ImageView profilePic;
 
         public MyViewHolder(@NonNull @NotNull View itemView) {
@@ -86,7 +92,8 @@ public class ContactAdapter extends  RecyclerView.Adapter<ContactAdapter.MyViewH
             lastName = itemView.findViewById(R.id.widget_contact_container_lastname_tv);
             lastMsg = itemView.findViewById(R.id.widget_contact_container_lastmsg_tv);
             lastMsgTime = itemView.findViewById(R.id.widget_contact_container_lastmsgtime_tv);
-            profilePic = itemView.findViewById(R.id.widget_contact_container_imageview);
+            initialsTV = itemView.findViewById(R.id.widget_contact_container_pic_textview);
+            profilePic = itemView.findViewById(R.id.widget_contact_container_pic_imageview);
 
             itemView.setOnClickListener(this);
         }

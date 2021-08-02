@@ -343,6 +343,7 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
                                         .collection("Contacts")
                                         .document(userInstance.getUserid())
                                         .set(currentUserContact, SetOptions.merge());
+
                                 ContactModel contact = new ContactModel(
                                         projectMemberModel.getUserid(),
                                         projectMemberModel.getFirstname(),

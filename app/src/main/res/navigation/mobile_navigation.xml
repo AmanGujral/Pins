@@ -22,9 +22,4 @@
         android:name="com.example.pins.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
-    <fragment
-        android:id="@+id/userfragment"
-        android:name="com.example.pins.userfragment"
-        android:label="fragment_userfragment"
-        tools:layout="@layout/fragment_userfragment" />
 </navigation>
