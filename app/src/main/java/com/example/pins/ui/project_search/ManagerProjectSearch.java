@@ -28,10 +28,12 @@ import com.example.pins.models.UserModel;
 import com.example.pins.structures.ProjectAdapter;
 import com.example.pins.ui.HomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -41,12 +43,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManagerProjectSearch extends AppCompatActivity implements ProjectAdapter.ItemClickListener {
-    ImageButton closeBtn;
-    ImageButton searchBtn;
-    ImageButton closeSearchBtn;
-    EditText searchField;
-    RecyclerView searchResultsRecyclerview;
-    TextView errorMsg;
+    private static final String TAG = null;
+    ImageButton McloseBtn;
+    ImageButton MsearchBtn;
+    ImageButton McloseSearchBtn;
+    EditText MsearchField;
+    RecyclerView MsearchResultsRecyclerview;
+    TextView MerrorMsg;
     RelativeLayout parentLayout;
 
     List<ProjectModel> allProjects = new ArrayList<>();
@@ -65,22 +68,22 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_search);
 
-        closeBtn = findViewById(R.id.activity_project_search_close_btn);
-        searchBtn = findViewById(R.id.activity_project_search_searchbar_search_btn);
-        closeSearchBtn = findViewById(R.id.activity_project_search_searchbar_close_btn);
-        searchField = findViewById(R.id.activity_project_search_searchbar_edittext);
-        searchResultsRecyclerview = findViewById(R.id.activity_project_search_recyclerview);
-        errorMsg = findViewById(R.id.activity_project_search_error_msg);
+        McloseBtn = findViewById(R.id.activity_project_search_close_btn);
+        MsearchBtn = findViewById(R.id.activity_project_search_searchbar_search_btn);
+        McloseSearchBtn = findViewById(R.id.activity_project_search_searchbar_close_btn);
+        MsearchField = findViewById(R.id.activity_project_search_searchbar_edittext);
+        MsearchResultsRecyclerview = findViewById(R.id.activity_project_search_recyclerview);
+        MerrorMsg = findViewById(R.id.activity_project_search_error_msg);
         parentLayout = findViewById(R.id.activity_project_search_parent_layout);
 
         userInstance = UserModel.getUserInstance();
 
-        searchBtn.setVisibility(View.VISIBLE);
-        closeSearchBtn.setVisibility(View.GONE);
+        MsearchBtn.setVisibility(View.VISIBLE);
+        McloseSearchBtn.setVisibility(View.GONE);
 
         getAllProjects();
 
-        searchField.addTextChangedListener(new TextWatcher() {
+        MsearchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -88,15 +91,15 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                query = searchField.getText().toString();
+                query = MsearchField.getText().toString();
                 if(!query.equalsIgnoreCase("")){
-                    searchBtn.setVisibility(View.GONE);
-                    closeSearchBtn.setVisibility(View.VISIBLE);
+                    MsearchBtn.setVisibility(View.GONE);
+                    McloseSearchBtn.setVisibility(View.VISIBLE);
                     searchProjects(query);
                 }
                 else {
-                    searchBtn.setVisibility(View.VISIBLE);
-                    closeSearchBtn.setVisibility(View.GONE);
+                    MsearchBtn.setVisibility(View.VISIBLE);
+                    McloseSearchBtn.setVisibility(View.GONE);
                     getAllProjects();
                 }
                 Log.e("QUERY: ", query);
@@ -108,12 +111,12 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
             }
         });
 
-        searchBtn.setOnClickListener(new View.OnClickListener() {
+        MsearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!query.equalsIgnoreCase("")) {
-                    searchBtn.setVisibility(View.GONE);
-                    closeSearchBtn.setVisibility(View.VISIBLE);
+                    MsearchBtn.setVisibility(View.GONE);
+                    McloseSearchBtn.setVisibility(View.VISIBLE);
                     searchProjects(query);
                 }
                 else {
@@ -124,15 +127,15 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
             }
         });
 
-        closeSearchBtn.setOnClickListener(new View.OnClickListener() {
+        McloseSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                searchField.setText("");
+                MsearchField.setText("");
             }
         });
 
         // Close Button Click Listener
-        closeBtn.setOnClickListener(new View.OnClickListener() {
+        McloseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
@@ -143,8 +146,8 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
     }
     void getAllProjects() {
         allProjects.clear();
-        errorMsg.setVisibility(View.GONE);
-        searchResultsRecyclerview.setVisibility(View.VISIBLE);
+        MerrorMsg.setVisibility(View.GONE);
+        MsearchResultsRecyclerview.setVisibility(View.VISIBLE);
         firestoreInstance.collection("Projects")
                 .orderBy("projectCode")
                 .get()
@@ -157,28 +160,28 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
                                     allProjects.add(doc.toObject(ProjectModel.class));
                                 }
                                 if(allProjects.size() != 0) {
-                                    searchResultsRecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                                    MsearchResultsRecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                                     adapter = new ProjectAdapter(
                                             getApplicationContext(),
                                             allProjects,
                                             ManagerProjectSearch.this);
-                                    searchResultsRecyclerview.setAdapter(adapter);
+                                    MsearchResultsRecyclerview.setAdapter(adapter);
                                 }
                                 else {
                                     Log.e("NUM OF PROJECTS: ", String.valueOf(allProjects.size()));
-                                    errorMsg.setVisibility(View.VISIBLE);
-                                    searchResultsRecyclerview.setVisibility(View.GONE);
+                                    MerrorMsg.setVisibility(View.VISIBLE);
+                                    MsearchResultsRecyclerview.setVisibility(View.GONE);
                                 }
                             }
                             else {
                                 Log.e("TASK FAILED 83: ", task.getException().getMessage());
-                                errorMsg.setVisibility(View.VISIBLE);
-                                searchResultsRecyclerview.setVisibility(View.GONE);
+                                MerrorMsg.setVisibility(View.VISIBLE);
+                                MsearchResultsRecyclerview.setVisibility(View.GONE);
                             }
                         }
                         else {
-                            errorMsg.setVisibility(View.VISIBLE);
-                            searchResultsRecyclerview.setVisibility(View.GONE);
+                            MerrorMsg.setVisibility(View.VISIBLE);
+                            MsearchResultsRecyclerview.setVisibility(View.GONE);
                             Log.e("TASK FAILED 91: ", task.getException().getMessage());
                         }
                     }
@@ -187,8 +190,8 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
 
     void searchProjects(String projectCode) {
         searchedProjects.clear();
-        errorMsg.setVisibility(View.GONE);
-        searchResultsRecyclerview.setVisibility(View.VISIBLE);
+        MerrorMsg.setVisibility(View.GONE);
+        MsearchResultsRecyclerview.setVisibility(View.VISIBLE);
         firestoreInstance.collection("Projects")
                 .whereGreaterThanOrEqualTo("projectCode", projectCode.toUpperCase())
                 .get()
@@ -201,28 +204,28 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
                                     searchedProjects.add(doc.toObject(ProjectModel.class));
                                 }
                                 if(searchedProjects.size() != 0) {
-                                    searchResultsRecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                                    MsearchResultsRecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                                     adapter = new ProjectAdapter(
                                             getApplicationContext(),
                                             searchedProjects,
                                             ManagerProjectSearch.this);
-                                    searchResultsRecyclerview.setAdapter(adapter);
+                                    MsearchResultsRecyclerview.setAdapter(adapter);
                                 }
                                 else {
                                     Log.e("NUM OF PROJECTS: ", String.valueOf(searchedProjects.size()));
-                                    errorMsg.setVisibility(View.VISIBLE);
-                                    searchResultsRecyclerview.setVisibility(View.GONE);
+                                    MerrorMsg.setVisibility(View.VISIBLE);
+                                    MsearchResultsRecyclerview.setVisibility(View.GONE);
                                 }
                             }
                             else {
                                 Log.e("TASK FAILED 83: ", task.getException().getMessage());
-                                errorMsg.setVisibility(View.VISIBLE);
-                                searchResultsRecyclerview.setVisibility(View.GONE);
+                                MerrorMsg.setVisibility(View.VISIBLE);
+                                MsearchResultsRecyclerview.setVisibility(View.GONE);
                             }
                         }
                         else {
-                            errorMsg.setVisibility(View.VISIBLE);
-                            searchResultsRecyclerview.setVisibility(View.GONE);
+                            MerrorMsg.setVisibility(View.VISIBLE);
+                            MsearchResultsRecyclerview.setVisibility(View.GONE);
                             Log.e("TASK FAILED 91: ", task.getException().getMessage());
                         }
                     }
@@ -253,11 +256,12 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
         TextView projectName = dialogView.findViewById(R.id.alert_dialog_auth_project_name_tv);
         TextView projectManager = dialogView.findViewById(R.id.alert_dialog_auth_project_manager_tv);
         Button noBtn = dialogView.findViewById(R.id.alert_dialog_auth_no_btn);
-        Button yesBtn = dialogView.findViewById(R.id.alert_dialog_auth_yes_btn);
+        Button yesBtn = dialogView.findViewById(R.id.alert_dialog_Auth_yes_btn);
 
         projectCode.setText(Project.getProjectCode());
         projectName.setText(Project.getProjectName());
         projectManager.setText(Project.getManagerName());
+        AuthCode.getText().toString();
 
         alertDialog = alertDialogBuilder.create();
         alertDialog.setCancelable(true);
@@ -266,23 +270,42 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
         yesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String Acode =AuthCode.getText().toString();
-                String VrifyCode=Project.getAuthorizationCode();
-                if (Acode==VrifyCode){
-                    Toast.makeText(getApplicationContext(),"Test1",Toast.LENGTH_SHORT);
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),"failed",Toast.LENGTH_SHORT);
-                }
+                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_LONG);
+                firestoreInstance.collection("Authorization Codes").document(Project.getProjectCode()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if ((documentSnapshot.exists())) {
+                            String VerifyCode=documentSnapshot.get("code").toString();
+                            if (VerifyCode.equals(AuthCode)){
+                                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_SHORT);
+                            }
+                        }
+                    }
+                });
             }
         });
 
-        noBtn.setOnClickListener(new View.OnClickListener() {
+        /*firestoreInstance.collection("Authorization Codes")
+                .document(Project.getProjectCode())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()){
+                            String VrfyCode=documentSnapshot.getString("code");
+                            if (VrfyCode.equals(AuthCode)){
+                                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_SHORT);
+                            }
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Document Missing",Toast.LENGTH_SHORT);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT);
             }
-        });
+        });*/
 
     }
 }

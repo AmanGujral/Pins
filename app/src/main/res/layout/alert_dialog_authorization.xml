@@ -127,7 +127,7 @@
 
 
         <Button
-            android:id="@+id/alert_dialog_add_project_yes_btn"
+            android:id="@+id/alert_dialog_Auth_yes_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Yes"

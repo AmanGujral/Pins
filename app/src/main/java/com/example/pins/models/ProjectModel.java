@@ -7,7 +7,6 @@ public class ProjectModel {
     private String projectCode;         // Project Code
     private String managerName;         // Project Manager Name
     private String managerEmail;        // Project Manager Email
-    private String AuthorizationCode;
 
     ProjectModel(){};
 
@@ -24,16 +23,8 @@ public class ProjectModel {
         this.projectCode = projectCode;
         this.managerName = managerName;
         this.managerEmail = managerEmail;
-        this.AuthorizationCode=AuthorizationCode;
     }
 
-    public String getAuthorizationCode() {
-        return AuthorizationCode;
-    }
-
-    public void setAuthorizationCode(String authorizationCode) {
-       this.AuthorizationCode = authorizationCode;
-    }
 
     public String getProjectId() {
         return projectId;
