@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Join Project?"
+        android:text="Join this Project as manager?"
         android:textSize="24sp"
         android:fontFamily="sans-serif-medium"
         android:textColor="@color/dark_grey"
@@ -34,7 +34,7 @@
             android:textColor="@color/medium_grey"/>
 
         <TextView
-            android:id="@+id/alert_dialog_add_project_project_code_tv"
+            android:id="@+id/alert_dialog_auth_project_code_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Project Code"
@@ -57,7 +57,7 @@
             android:textColor="@color/medium_grey"/>
 
         <TextView
-            android:id="@+id/alert_dialog_add_project_project_name_tv"
+            android:id="@+id/alert_dialog_auth_project_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Project Name"
@@ -80,14 +80,36 @@
             android:textColor="@color/medium_grey"/>
 
         <TextView
-            android:id="@+id/alert_dialog_add_project_project_manager_tv"
+            android:id="@+id/alert_dialog_auth_project_manager_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Project Manager"
             android:textSize="16sp"
             android:textColor="@color/green"/>
 
+
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="5dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter Authorization Code:"
+        android:textColor="@color/medium_grey"
+        android:textSize="16sp"
+        />
+        <EditText
+            android:id="@+id/ManagerAuthCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10sp"
+            android:paddingBottom="10sp"/>
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -96,7 +118,7 @@
         android:layout_marginTop="20dp">
 
         <Button
-            android:id="@+id/alert_dialog_auth_no_btn"
+            android:id="@+id/alert_dialog_add_project_no_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancel"
@@ -105,7 +127,7 @@
 
 
         <Button
-            android:id="@+id/alert_dialog_auth_yes_btn"
+            android:id="@+id/alert_dialog_add_project_yes_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Yes"
