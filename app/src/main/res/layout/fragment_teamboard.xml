@@ -134,14 +134,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/fragment_teamboard_searchbar_layout"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:padding="20dp">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/myTeamBoardRecycler"
-            android:layout_width="500dp"
+            android:id="@+id/fragment_teamboard_search_recyclerview"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            />
+            tools:listitem="@layout/widget_task_container"/>
+
     </RelativeLayout>
 
 

@@ -56,7 +56,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="6dp"
-                android:text="+1"
                 android:textSize="14sp"
                 android:maxLines="1"
                 android:gravity="center"
@@ -65,7 +64,7 @@
                 android:background="@drawable/round_light_green_bg"
                 android:layout_marginStart="5dp"
                 android:layout_toEndOf="@id/widget_task_container_assignedto_tv"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/widget_task_container_status"

@@ -46,7 +46,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskAdapterVie
     public void onBindViewHolder(@NonNull @NotNull TaskAdapterViewHolder holder, int position) {
         TaskModel task = taskList.get(position);
 
+        // Task Name/ Description
         holder.taskName.setText(task.getTaskName());
+
+        // Task Assigned To
         if(task.getAssignedTo().contains(userFullName)) {
             holder.assignedTo.setText(userFullName);
         }
@@ -58,7 +61,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskAdapterVie
             String numPeople = "+" + String.valueOf(task.getAssignedTo().size() - 1);
             holder.morePeopleTV.setText(numPeople);
         }
+        else {
+            holder.morePeopleTV.setVisibility(View.GONE);
+        }
+
+        // Task Status
         holder.status.setText(task.getStatus());
+
+        // Task Priority
         if (task.getPriority().equals(TaskModel.PRIORITY_HIGH)) {
             holder.priorityView.setBackgroundColor(context.getResources().getColor(R.color.red));
         } else {

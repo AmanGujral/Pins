@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -76,12 +75,12 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     RecyclerView todoRecyclerview;
     RecyclerView doingRecyclerview;
     RecyclerView doneRecyclerview;
-    RecyclerView tasksRecyclerView;
+    RecyclerView searchedTaskRecyclerview;
 
     TaskAdapter todoTaskAdapter;
     TaskAdapter doingTaskAdapter;
     TaskAdapter doneTaskAdapter;
-    TaskAdapter taskRecyclerAdapter;
+    TaskAdapter searchedTaskAdapter;
 
     FirebaseFirestore firestoreInstance = FirebaseFirestore.getInstance();
 
@@ -91,7 +90,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     List<TaskModel> todoTaskList = new ArrayList<>();
     List<TaskModel> doingTaskList = new ArrayList<>();
     List<TaskModel> doneTaskList = new ArrayList<>();
-    List<TaskModel> taskRecyclerList = new ArrayList<>();
+    List<TaskModel> searchedTasksList = new ArrayList<>();
     String query = "";
     String currentTaskStatus;
 
@@ -127,8 +126,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         doingExpandBtn = binding.fragmentMyboardDoingExpandBtn;
         doneExpandBtn = binding.fragmentMyboardDoneExpandBtn;
         request=binding.requests;
-        //recyclers
-        tasksRecyclerView = binding.myBoardRecycler;
+        searchedTaskRecyclerview = binding.fragmentMyboardSearchRecyclerview;
         todoRecyclerview = binding.fragmentMyboardTodoRecyclerview;
         doingRecyclerview = binding.fragmentMyboardDoingRecyclerview;
         doneRecyclerview = binding.fragmentMyboardDoneRecyclerview;
@@ -160,14 +158,13 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
                 if(!query.equalsIgnoreCase("")){
                     searchBtn.setVisibility(View.GONE);
                     closeSearchBtn.setVisibility(View.VISIBLE);
-                    boardLayout.setVisibility(View.GONE);
-                    searchLayout.setVisibility(View.VISIBLE);
+                    showSearchLayout();
                     searchTasks(query);
                 }
                 else {
                     searchBtn.setVisibility(View.VISIBLE);
                     closeSearchBtn.setVisibility(View.GONE);
-                    //getAllProjects();
+                    showBoardLayout();
                 }
                 Log.e("QUERY: ", query);
             }
@@ -181,10 +178,10 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-Intent intent=new Intent(MyBoardFragment.this.getActivity(),projectrequest.class);
-startActivity(intent);
+                Intent intent=new Intent(MyBoardFragment.this.getActivity(),projectrequest.class);
+                startActivity(intent);
 
-               // Toast toast=Toast.makeText(getActivity(),"hello",Toast.LENGTH_SHORT);
+                // Toast toast=Toast.makeText(getActivity(),"hello",Toast.LENGTH_SHORT);
                 //toast.show();
             }
         });
@@ -195,7 +192,8 @@ startActivity(intent);
                 if(!query.equalsIgnoreCase("")) {
                     searchBtn.setVisibility(View.GONE);
                     closeSearchBtn.setVisibility(View.VISIBLE);
-                    //searchProjects(query);
+                    showSearchLayout();
+                    searchTasks(query);
                 }
                 else {
                     Snackbar.make(parentLayout, "Enter a valid task name.", Snackbar.LENGTH_SHORT)
@@ -209,8 +207,7 @@ startActivity(intent);
             @Override
             public void onClick(View view) {
                 searchField.setText("");
-                searchLayout.setVisibility(View.GONE);
-                boardLayout.setVisibility(View.VISIBLE);
+                showBoardLayout();
             }
         });
 
@@ -245,24 +242,29 @@ startActivity(intent);
         return root;
     }
 
-    private void searchTasks(String query) {
-        tasksRecyclerView.setVisibility(View.VISIBLE);
+    private void searchTasks(String taskName) {
+        searchedTasksList.clear();
+        String userFullName = userInstance.getFirstname() + " " + userInstance.getLastname();
+
         firestoreInstance.collection("Projects")
-        .document(currentProject.getProjectId())
+                .document(currentProject.getProjectId())
                 .collection("Tasks")
+                .orderBy("taskName")
+                .whereArrayContains("assignedTo", userFullName)
+                .whereGreaterThanOrEqualTo("taskName", taskName)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful() && task.getResult() != null) {
                             for (QueryDocumentSnapshot doc : task.getResult()) {
-                                taskRecyclerList.add(doc.toObject(TaskModel.class));
+                                searchedTasksList.add(doc.toObject(TaskModel.class));
                             }
-                            tasksRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+                            searchedTaskRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
 
-                            taskRecyclerAdapter = new TaskAdapter(getContext(),taskRecyclerList,MyBoardFragment.this);
+                            searchedTaskAdapter = new TaskAdapter(getContext(), searchedTasksList,MyBoardFragment.this);
 
-                            tasksRecyclerView.setAdapter(taskRecyclerAdapter);
+                            searchedTaskRecyclerview.setAdapter(searchedTaskAdapter);
                         }
                     }
                 });
@@ -418,11 +420,6 @@ startActivity(intent);
     }
 
     public void showDialog(TaskModel task) {
-        /*List<String> nameList = new ArrayList<String>();
-        nameList.add("Amanpreet Singh");
-        nameList.add("Ripudaman Singh");
-        nameList.add("Jagmeet Singh");*/
-
         // Get current task status
         currentTaskStatus = task.getStatus();
 
