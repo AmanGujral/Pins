@@ -285,8 +285,18 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
                             Log.e("Message:","Welcome");
                         }
                     }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Failure Message: ","Failed to get document");
+                    }
                 });
-                Log.e("Message:","Value"+String.valueOf(Acod));
+            }
+        });
+        noBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
             }
         });
     }
