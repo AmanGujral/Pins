@@ -32,10 +32,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -44,6 +47,7 @@ import java.util.List;
 
 public class ManagerProjectSearch extends AppCompatActivity implements ProjectAdapter.ItemClickListener {
     private static final String TAG = null;
+    ProjectModel projectModel;
     ImageButton McloseBtn;
     ImageButton MsearchBtn;
     ImageButton McloseSearchBtn;
@@ -261,13 +265,47 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
         projectCode.setText(Project.getProjectCode());
         projectName.setText(Project.getProjectName());
         projectManager.setText(Project.getManagerName());
-        AuthCode.getText().toString();
 
-        alertDialog = alertDialogBuilder.create();
-        alertDialog.setCancelable(true);
-        alertDialog.show();
+        /*DocumentReference documentReference = firestoreInstance.collection("AuthCodes")
+                .document();
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+                    String ACode=AuthCode.getText().toString();
+                    if (ACode.equals(documentSnapshot.getString("code"))){
+                        Log.e("Code:","Is same, passed auth");
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("OnFaliure:","failed");
+            }
+        });*/
 
         yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("MESSAGE: ","CLICKED");
+                firestoreInstance.collection("Authorization Codes").document(Project.getProjectCode())
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if ((documentSnapshot.exists())) {
+                            String VerifyCode=documentSnapshot.get("code").toString();
+                            if (VerifyCode.equals(AuthCode)){
+                                Log.e("Message:"," the code is equal");
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        /*yesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_LONG);
@@ -283,7 +321,15 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
                     }
                 });
             }
-        });
+        });*/
+
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        //DocumentReference fireRef = firestoreInstance.collection("Authorization Codes").document(Project.getProjectCode());
+        //fireRef.get(Source.valueOf("Code"));
+
 
         /*firestoreInstance.collection("Authorization Codes")
                 .document(Project.getProjectCode())
