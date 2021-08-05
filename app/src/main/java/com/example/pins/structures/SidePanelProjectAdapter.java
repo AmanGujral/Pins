@@ -73,13 +73,13 @@ public class SidePanelProjectAdapter extends RecyclerView.Adapter<SidePanelProje
         @Override
         public void onClick(View view) {
             if(clickListener != null) {
-                clickListener.onItemClick(view, getAdapterPosition());
+                clickListener.onSidePanelProjectAdapterItemClick(view, getAdapterPosition());
             }
         }
     }
 
     public interface ItemClickListener {
-        void onItemClick(View view, int position);
+        void onSidePanelProjectAdapterItemClick(View view, int position);
     }
 
     public String getInitials(String name) {

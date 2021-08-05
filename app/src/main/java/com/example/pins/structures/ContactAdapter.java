@@ -21,9 +21,9 @@ import java.util.List;
 public class ContactAdapter extends  RecyclerView.Adapter<ContactAdapter.MyViewHolder> {
     private final Context context;
     List<ContactModel> contactList;
-    private ProjectAdapter.ItemClickListener clickListener;
+    ItemClickListener clickListener;
 
-    public ContactAdapter(Context context, List<ContactModel> contactList, ProjectAdapter.ItemClickListener listener) {
+    public ContactAdapter(Context context, List<ContactModel> contactList, ItemClickListener listener) {
         this.context = context;
         this.contactList = contactList;
         this.clickListener = listener;
@@ -101,12 +101,12 @@ public class ContactAdapter extends  RecyclerView.Adapter<ContactAdapter.MyViewH
         @Override
         public void onClick(View view) {
             if(clickListener != null) {
-                clickListener.onItemClick(view, getAdapterPosition());
+                clickListener.onContactAdapterItemClick(view, getAdapterPosition());
             }
         }
     }
 
     public interface ItemClickListener {
-        void onItemClick(View view, int position);
+        void onContactAdapterItemClick(View view, int position);
     }
 }

@@ -26,7 +26,7 @@
         android:id="@+id/alert_dialog_task_details_names_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/widget_name_container"
+        tools:listitem="@layout/widget_name_container_small"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_marginTop="20dp"/>

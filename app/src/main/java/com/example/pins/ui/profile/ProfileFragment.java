@@ -1,6 +1,7 @@
 package com.example.pins.ui.profile;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -17,25 +19,33 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.pins.R;
 import com.example.pins.databinding.FragmentProfileBinding;
+import com.example.pins.models.ProjectMemberModel;
+import com.example.pins.models.ProjectModel;
 import com.example.pins.models.UserModel;
+import com.example.pins.ui.HomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,12 +59,18 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
     TextView usernameTv;
     TextView emailTv;
+    TextView currentProjectCode;
+    TextView currentProjectName;
+    TextView staticText;
+    CardView leaveProjectBtn;
+    CardView projectNameCV;
     ImageView profileImageView;
-    Spinner projectSpinner;
     RelativeLayout parentLayout;
-    FirebaseFirestore firestoreInst = FirebaseFirestore.getInstance();
 
     UserModel userInstance = UserModel.getUserInstance();
+    ProjectModel currentProject;
+
+    List<ProjectMemberModel> projectMembersList = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -64,9 +80,15 @@ public class ProfileFragment extends Fragment {
 
         usernameTv = binding.profileUsername;
         emailTv = binding.profileEmail;
+        currentProjectCode = binding.fragmentProfileCurrentProjectCode;
+        currentProjectName = binding.fragmentProfileCurrentProjectName;
+        staticText = binding.fragmentProfileCurrentProjectText;
+        leaveProjectBtn = binding.fragmentProfileLeaveProjectCv;
+        projectNameCV = binding.fragmentProfileCurrentProjectCv;
         profileImageView = binding.profileImage;
-        projectSpinner = binding.fragmentProfileSpinner;
         parentLayout = binding.fragmentProfileParent;
+
+        getCurrentProject();
 
         String fullName = userInstance.getFirstname() + " " + userInstance.getLastname();
         usernameTv.setText(fullName);
@@ -78,27 +100,6 @@ public class ProfileFragment extends Fragment {
                 .placeholder(R.drawable.profiledefault)
                 .into(profileImageView);
 
-        //loading data into the spinner
-        CollectionReference collectionReference = firestoreInst.collection(userInstance.getUserid());
-        List<String> projects = new ArrayList<>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, projects);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        projectSpinner.setAdapter(adapter);
-        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for(QueryDocumentSnapshot documentSnapshot: task.getResult()){
-                        String project = documentSnapshot.getString("allProjects");
-                        projects.add(project);
-                        Log.d(TAG, "onComplete: array values: " + project);
-                    }
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        });
-    // end of spinner code
-
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,9 +107,58 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        leaveProjectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(currentProject != null) {
+                    FirebaseFirestore.getInstance()
+                        .collection("Projects")
+                        .document(currentProject.getProjectId())
+                        .collection("Project Members")
+                        .document(userInstance.getUserid())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful() && task.getResult() != null) {
+                                    showConfirmLeaveProjectDialogBox(task.getResult().toObject(ProjectMemberModel.class));
+                                }
+                            }
+                        });
+                }
+            }
+        });
+
         return root;
     }
 
+    public void getCurrentProject() {
+        if(userInstance.getCurrentProjectId() != null && !userInstance.getCurrentProjectId().isEmpty()) {
+            FirebaseFirestore.getInstance()
+                    .collection("Projects")
+                    .document(userInstance.getCurrentProjectId())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                currentProject = task.getResult().toObject(ProjectModel.class);
+                                if(currentProject != null) {
+                                    currentProjectCode.setText(currentProject.getProjectCode());
+                                    currentProjectName.setText(currentProject.getProjectName());
+                                    getCurrentProjectMembers();
+                                }
+                            }
+                        }
+                    });
+        }
+        else {
+            projectNameCV.setVisibility(View.GONE);
+            staticText.setVisibility(View.GONE);
+            leaveProjectBtn.setVisibility(View.GONE);
+            leaveProjectBtn.setEnabled(false);
+        }
+    }
 
     private void chooseImage() {
 
@@ -186,5 +236,114 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
+
+    public void removeMemberFromProject(ProjectMemberModel projectMember) {
+
+        // Remove projectMember as a contact from all other Project Members
+        for(ProjectMemberModel member : projectMembersList) {
+            FirebaseFirestore.getInstance()
+                    .collection("Projects")
+                    .document(currentProject.getProjectId())
+                    .collection("Project Members")
+                    .document(member.getUserid())
+                    .collection("Contacts")
+                    .document(projectMember.getUserid())
+                    .delete();
+        }
+
+        // Remove projectMember from Project Members collection of Project
+        FirebaseFirestore.getInstance()
+                .collection("Projects")
+                .document(currentProject.getProjectId())
+                .collection("Project Members")
+                .document(projectMember.getUserid())
+                .delete();
+
+        // Update User data for projectMember (remove current project from projectMember's user data)
+        userInstance.getAllProjects().remove(currentProject.getProjectId());
+
+        if(userInstance.getAllProjects().size() > 0) {
+            userInstance.setCurrentProjectId(userInstance.getAllProjects().get(0));
+        }
+        else {
+            userInstance.setCurrentProjectId("");
+        }
+
+        FirebaseFirestore.getInstance()
+                .collection("Users")
+                .document(projectMember.getUserid())
+                .set(userInstance, SetOptions.merge())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            showSnackBar("Project Left.");
+                            startActivity(new Intent(requireContext(), HomeActivity.class));
+                            requireActivity().finish();
+                        }
+                    }
+                });
+
+
+    }
+
+    public void getCurrentProjectMembers() {
+        FirebaseFirestore.getInstance()
+                .collection("Projects")
+                .document(userInstance.getCurrentProjectId())
+                .collection("Project Members")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            for(QueryDocumentSnapshot doc : task.getResult()) {
+                                projectMembersList.add(doc.toObject(ProjectMemberModel.class));
+                            }
+                        }
+                    }
+                });
+
+    }
+
+    public void showSnackBar(String message) {
+        Snackbar.make(parentLayout, message, Snackbar.LENGTH_SHORT)
+                .setBackgroundTint(getResources().getColor(R.color.green_dark))
+                .show();
+    }
+
+    public void showConfirmLeaveProjectDialogBox(ProjectMemberModel projectMember) {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireActivity());
+        AlertDialog alertDialog;
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_confirm_leave_project, null);
+        alertDialogBuilder.setView(dialogView);
+
+        Button yesBtn = dialogView.findViewById(R.id.alert_dialog_confirm_leave_project_yes_btn);
+        Button noBtn = dialogView.findViewById(R.id.alert_dialog_confirm_leave_project_no_btn);
+
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        noBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("Project Left", currentProject.getProjectName());
+                removeMemberFromProject(projectMember);
+                alertDialog.dismiss();
+            }
+        });
+    }
+
 }
 

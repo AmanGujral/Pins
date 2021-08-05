@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="10dp">
+
+    <TextView
+        android:id="@+id/widget_name_container_large_tv"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="HelloHelloHelloHelloHelloHello"
+        android:maxLines="1"
+        android:textSize="24sp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="50dp"
+        android:textColor="@color/dark_grey"
+        android:background="@drawable/round_light_grey_bg" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="4dp"
+        android:layout_marginEnd="10dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true">
+
+        <ImageButton
+            android:id="@+id/widget_name_container_large_remove_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_close_white_24"
+            android:layout_gravity="center"
+            android:background="@color/red_dark"
+            android:tooltipText="Remove"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/widget_name_container_large_add_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_add_white_24"
+            android:layout_gravity="center"
+            android:background="@color/green"
+            android:tooltipText="Add"
+            android:visibility="gone"/>
+
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>

@@ -106,12 +106,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskAdapterVie
         @Override
         public void onClick(View view) {
             if(clickListener != null) {
-                clickListener.onItemClick(view, getAdapterPosition());
+                clickListener.onTaskAdapterItemClick(view, getAdapterPosition());
             }
         }
     }
 
     public interface ItemClickListener {
-        void onItemClick(View view, int position);
+        void onTaskAdapterItemClick(View view, int position);
     }
 }

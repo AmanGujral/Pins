@@ -151,7 +151,7 @@ public class HomeActivity extends AppCompatActivity implements SidePanelProjectA
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onSidePanelProjectAdapterItemClick(View view, int position) {
         Log.e("Item Clicked", userProjects.get(position).getProjectName());
         loadProject(userProjects.get(position));
     }

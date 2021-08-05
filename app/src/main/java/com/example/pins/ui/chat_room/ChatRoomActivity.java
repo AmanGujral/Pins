@@ -290,7 +290,7 @@ public class ChatRoomActivity extends AppCompatActivity implements MessageAdapte
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onMessageAdapterItemLongClick(View view, int position) {
         Log.e("Message Clicked", messageList.get(position).getMessage());
     }
 

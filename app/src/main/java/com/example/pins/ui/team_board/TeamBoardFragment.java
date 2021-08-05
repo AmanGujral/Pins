@@ -9,9 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,12 +28,18 @@ import com.example.pins.databinding.FragmentTeamboardBinding;
 import com.example.pins.models.ProjectModel;
 import com.example.pins.models.TaskModel;
 import com.example.pins.models.UserModel;
-import com.example.pins.structures.NameAdapter;
+import com.example.pins.models.ProjectMemberModel;
+import com.example.pins.structures.AssignedToNameAdapter;
+import com.example.pins.structures.ShowProjectMembersAdapter;
 import com.example.pins.structures.TaskAdapter;
+import com.example.pins.ui.all_chats.AllChatsActivity;
 import com.example.pins.ui.project_search.ProjectSearchActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -41,8 +50,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClickListener {
+public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClickListener,
+        AssignedToNameAdapter.ItemClickListener, ShowProjectMembersAdapter.ItemClickListener{
 
     private FragmentTeamboardBinding binding;
 
@@ -51,6 +62,10 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
     EditText searchField;
     ImageButton searchBtn;
     ImageButton closeSearchBtn;
+    ImageButton chatBtn;
+    ImageButton createTaskBtn;
+    ImageButton showTeamBtn;
+    ImageButton incomingRequestsBtn;
 
     RelativeLayout parentLayout;
     RelativeLayout errorMsgLayout;
@@ -63,6 +78,7 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
     LinearLayout doingExpanded;
     LinearLayout doneCompressed;
     LinearLayout doneExpanded;
+    LinearLayout operationsLayout;
 
     ImageButton todoExpandBtn;
     ImageButton doingExpandBtn;
@@ -78,6 +94,10 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
     TaskAdapter doneTaskAdapter;
     TaskAdapter searchedTaskAdapter;
 
+    AssignedToNameAdapter assignedToNameAdapter;
+
+    ShowProjectMembersAdapter showProjectMembersAdapter;
+
     FirebaseFirestore firestoreInstance = FirebaseFirestore.getInstance();
 
     UserModel userInstance;
@@ -87,6 +107,8 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
     List<TaskModel> doingTaskList = new ArrayList<>();
     List<TaskModel> doneTaskList = new ArrayList<>();
     List<TaskModel> searchedTaskList = new ArrayList<>();
+    List<ProjectMemberModel> projectMembersList = new ArrayList<>();
+    List<String> createTaskAssignedToList = new ArrayList<>();
     String query = "";
     String currentTaskStatus;
 
@@ -123,13 +145,55 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
         doingRecyclerview = binding.fragmentTeamboardDoingRecyclerview;
         doneRecyclerview = binding.fragmentTeamboardDoneRecyclerview;
         searchedTasksRecyclerview = binding.fragmentTeamboardSearchRecyclerview;
+        chatBtn = binding.fragmentTeamboardMsgBtn;
+        operationsLayout = binding.fragmentTeamboardOperationsBar;
+        createTaskBtn = binding.fragmentTeamboardCreateTaskBtn;
+        showTeamBtn = binding.fragmentTeamboardShowTeamBtn;
+        incomingRequestsBtn = binding.fragmentTeamboardRequestsBtn;
 
         userInstance = UserModel.getUserInstance();
+
+        if(userInstance.getRole().equals(UserModel.ROLE_MANAGER)) {
+            operationsLayout.setVisibility(View.VISIBLE);
+            incomingRequestsBtn.setVisibility(View.VISIBLE);
+        }
+        else {
+            operationsLayout.setVisibility(View.INVISIBLE);
+            incomingRequestsBtn.setVisibility(View.GONE);
+        }
 
         searchBtn.setVisibility(View.VISIBLE);
         closeSearchBtn.setVisibility(View.GONE);
 
         getCurrentProject();
+
+        createTaskBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showCreateTaskDialogBox();
+            }
+        });
+
+        showTeamBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showProjectMembersDialogBox(true);
+            }
+        });
+
+        incomingRequestsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        chatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(requireContext(), AllChatsActivity.class));
+            }
+        });
 
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -170,9 +234,7 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
                     searchTasks(query);
                 }
                 else {
-                    Snackbar.make(parentLayout, "Enter a valid task name.", Snackbar.LENGTH_SHORT)
-                            .setBackgroundTint(getResources().getColor(R.color.green_dark))
-                            .show();
+                    showSnackBar("Enter a valid task name.");
                 }
             }
         });
@@ -219,7 +281,6 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
 
     private void searchTasks(String taskName) {
         searchedTaskList.clear();
-        String userFullName = userInstance.getFirstname() + " " + userInstance.getLastname();
 
         firestoreInstance.collection("Projects")
                 .document(currentProject.getProjectId())
@@ -258,11 +319,37 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
                         public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful() && task.getResult() != null) {
                                 currentProject = task.getResult().toObject(ProjectModel.class);
+                                getCurrentProjectMembers();
                                 initLayout();
                             }
                         }
                     });
         }
+    }
+
+    public void getCurrentProjectMembers() {
+        FirebaseFirestore.getInstance()
+                .collection("Projects")
+                .document(userInstance.getCurrentProjectId())
+                .collection("Project Members")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            for(QueryDocumentSnapshot doc : task.getResult()) {
+                                projectMembersList.add(doc.toObject(ProjectMemberModel.class));
+                            }
+                        }
+                    }
+                });
+
+    }
+
+    public void showSnackBar(String message) {
+        Snackbar.make(parentLayout, message, Snackbar.LENGTH_SHORT)
+                .setBackgroundTint(getResources().getColor(R.color.green_dark))
+                .show();
     }
 
     public void getTasks() {
@@ -318,6 +405,36 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
             projectName.setText("");
             showErrorLayout();
         }
+    }
+
+    public void addTask(TaskModel taskModel) {
+        FirebaseFirestore.getInstance()
+                .collection("Projects")
+                .document(currentProject.getProjectId())
+                .collection("Tasks")
+                .add(taskModel)
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<DocumentReference> task) {
+                        if(task.isSuccessful() && task.getResult() != null) {
+                            taskModel.setTaskId(task.getResult().getId());
+                            FirebaseFirestore.getInstance()
+                                    .collection("Projects")
+                                    .document(currentProject.getProjectId())
+                                    .collection("Tasks")
+                                    .document(taskModel.getTaskId())
+                                    .set(taskModel, SetOptions.merge())
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                            if(task.isSuccessful()) {
+                                                getTasks();
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                });
     }
 
     public void showErrorLayout() {
@@ -389,7 +506,166 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
         binding = null;
     }
 
-    public void showDialog(TaskModel task) {
+    public void showCreateTaskDialogBox() {
+        createTaskAssignedToList.clear();
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireActivity());
+        AlertDialog alertDialog;
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_create_task, null);
+        alertDialogBuilder.setView(dialogView);
+
+        TextInputLayout taskNameTil = dialogView.findViewById(R.id.alert_dialog_create_task_til);
+        TextInputEditText taskNameTie = dialogView.findViewById(R.id.alert_dialog_create_task_tie);
+        RecyclerView dialogRV = dialogView.findViewById(R.id.alert_dialog_create_task_names_rv);
+        ImageButton addPerson = dialogView.findViewById(R.id.alert_dialog_create_task_add_person_btn);
+        RadioGroup priorityRadioGroup = dialogView.findViewById(R.id.alert_dialog_create_task_radio_group);
+        RadioButton highRadioBtn = dialogView.findViewById(R.id.alert_dialog_create_task_high_radio_btn);
+        RadioButton mediumRadioBtn = dialogView.findViewById(R.id.alert_dialog_create_task_medium_radio_btn);
+        RadioButton lowRadioBtn = dialogView.findViewById(R.id.alert_dialog_create_task_low_radio_btn);
+        Button cancelBtn = dialogView.findViewById(R.id.alert_dialog_create_task_no_btn);
+        Button createBtn = dialogView.findViewById(R.id.alert_dialog_create_task_yes_btn);
+
+
+        // Set names list
+        dialogRV.setLayoutManager(new LinearLayoutManager(requireContext()));
+        assignedToNameAdapter = new AssignedToNameAdapter(requireContext(),
+                createTaskAssignedToList, true, this);
+        dialogRV.setAdapter(assignedToNameAdapter);
+
+        addPerson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(createTaskAssignedToList.size() < 4) {
+                    showProjectMembersDialogBox(false);
+                }
+            }
+        });
+
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+
+        createBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(taskNameTie.getText() == null || Objects.requireNonNull(taskNameTie.getText()).toString().isEmpty()) {
+                    // Show Error
+                    showSnackBar("Task name cannot be empty.");
+                }
+                else if(createTaskAssignedToList.isEmpty()) {
+                    // Show Error
+                    showSnackBar("Assign task to at least 1 person.");
+                }
+                else {
+                    String priority = TaskModel.PRIORITY_HIGH;
+
+                    switch (priorityRadioGroup.getCheckedRadioButtonId()) {
+                        case R.id.alert_dialog_create_task_high_radio_btn:
+                            priority = TaskModel.PRIORITY_HIGH;
+                            break;
+                        case R.id.alert_dialog_create_task_medium_radio_btn:
+                            priority = TaskModel.PRIORITY_MEDIUM;
+                            break;
+                        case R.id.alert_dialog_create_task_low_radio_btn:
+                            priority = TaskModel.PRIORITY_LOW;
+                            break;
+                    }
+
+                    TaskModel newTask = new TaskModel(
+                            "",
+                            taskNameTie.getText().toString(),
+                            createTaskAssignedToList,
+                            TaskModel.STATUS_TODO,
+                            priority
+                    );
+
+                    addTask(newTask);
+                    alertDialog.dismiss();
+                }
+            }
+        });
+    }
+
+    public void showProjectMembersDialogBox(Boolean showRemoveBtn) {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireActivity());
+        AlertDialog alertDialog;
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_show_project_members, null);
+        alertDialogBuilder.setView(dialogView);
+
+        RecyclerView dialogRV = dialogView.findViewById(R.id.alert_dialog_show_project_members_rv);
+        Button doneBtn = dialogView.findViewById(R.id.alert_dialog_show_project_members_yes_btn);
+
+
+        // Set names list
+        dialogRV.setLayoutManager(new LinearLayoutManager(requireContext()));
+        showProjectMembersAdapter = new ShowProjectMembersAdapter(requireContext(),
+                projectMembersList, showRemoveBtn, this);
+        dialogRV.setAdapter(showProjectMembersAdapter);
+
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        doneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    public void showConfirmRemoveMemberDialogBox(ProjectMemberModel projectMember) {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireActivity());
+        AlertDialog alertDialog;
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_confirm_remove_member, null);
+        alertDialogBuilder.setView(dialogView);
+
+        TextView nameTv = dialogView.findViewById(R.id.alert_dialog_confirm_remove_member_name_tv);
+        Button yesBtn = dialogView.findViewById(R.id.alert_dialog_confirm_remove_member_yes_btn);
+        Button noBtn = dialogView.findViewById(R.id.alert_dialog_confirm_remove_member_no_btn);
+
+        String fullName = projectMember.getFirstname() + " " + projectMember.getLastname();
+        nameTv.setText(fullName);
+
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        noBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("Member Removed", projectMember.getFirstname());
+                removeMemberFromProject(projectMember);
+                projectMembersList.remove(projectMember);
+                showProjectMembersAdapter.notifyDataSetChanged();
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    public void showTaskDetailsDialogBox(TaskModel task) {
         // Get current task status
         currentTaskStatus = task.getStatus();
 
@@ -427,8 +703,9 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
 
         // Set names list
         dialogRV.setLayoutManager(new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false));
-        NameAdapter nameAdapter = new NameAdapter(requireContext(), task.getAssignedTo());
-        dialogRV.setAdapter(nameAdapter);
+        AssignedToNameAdapter assignedToNameAdapter = new AssignedToNameAdapter(requireContext(),
+                task.getAssignedTo(), false, this);
+        dialogRV.setAdapter(assignedToNameAdapter);
 
         // Set status
         if(currentTaskStatus.equals(TaskModel.STATUS_TODO)) {
@@ -542,19 +819,115 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
                 });
     }
 
+    public void removeMemberFromProject(ProjectMemberModel projectMember) {
+
+        // Remove projectMember as a contact from all other Project Members
+        for(ProjectMemberModel member : projectMembersList) {
+            FirebaseFirestore.getInstance()
+                    .collection("Projects")
+                    .document(currentProject.getProjectId())
+                    .collection("Project Members")
+                    .document(member.getUserid())
+                    .collection("Contacts")
+                    .document(projectMember.getUserid())
+                    .delete();
+        }
+
+        // Remove projectMember from Project Members collection of Project
+        FirebaseFirestore.getInstance()
+                .collection("Projects")
+                .document(currentProject.getProjectId())
+                .collection("Project Members")
+                .document(projectMember.getUserid())
+                .delete();
+
+        // Update User data for projectMember (remove current project from projectMember's user data)
+        FirebaseFirestore.getInstance()
+                .collection("Users")
+                .document(projectMember.getUserid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful() && task.getResult() != null) {
+                            UserModel projectMemberUserModel = task.getResult().toObject(UserModel.class);
+                            if(projectMemberUserModel != null) {
+
+                                projectMemberUserModel.getAllProjects().remove(currentProject.getProjectId());
+
+                                if(projectMemberUserModel.getAllProjects().size() > 0) {
+                                    if(projectMemberUserModel.getCurrentProjectId().equals(currentProject.getProjectId())) {
+                                        projectMemberUserModel.setCurrentProjectId(projectMemberUserModel.getAllProjects().get(0));
+                                    }
+                                }
+                                else {
+                                    projectMemberUserModel.setCurrentProjectId("");
+                                }
+
+                                FirebaseFirestore.getInstance()
+                                        .collection("Users")
+                                        .document(projectMember.getUserid())
+                                        .set(projectMemberUserModel, SetOptions.merge())
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                                if(task.isSuccessful()) {
+                                                    showSnackBar(projectMember.getFirstname() + " "
+                                                            + projectMember.getLastname()
+                                                            + " removed from the project.");
+                                                }
+                                            }
+                                        });
+                            }
+                        }
+                    }
+                });
+
+
+    }
+
     @Override
-    public void onItemClick(View view, int position) {
+    public void onTaskAdapterItemClick(View view, int position) {
         if(isTodoBoardActive) {
             Log.e("Task Name", todoTaskList.get(position).getTaskName());
-            showDialog(todoTaskList.get(position));
+            showTaskDetailsDialogBox(todoTaskList.get(position));
         }
         if(isDoingBoardActive) {
             Log.e("Task Name", doingTaskList.get(position).getTaskName());
-            showDialog(doingTaskList.get(position));
+            showTaskDetailsDialogBox(doingTaskList.get(position));
         }
         if(isDoneBoardActive) {
             Log.e("Task Name", doneTaskList.get(position).getTaskName());
-            showDialog(doneTaskList.get(position));
+            showTaskDetailsDialogBox(doneTaskList.get(position));
+        }
+    }
+
+    @Override
+    public void onAssignedToNameAdapterItemClick(View view, int position) {
+        String removedName = createTaskAssignedToList.remove(position);
+        assignedToNameAdapter.notifyDataSetChanged();
+        Log.e("Removed Name", removedName);
+    }
+
+    @Override
+    public void onShowProjectMembersAdapterItemClick(View view, int position, Boolean showRemoveBtn) {
+        if(showRemoveBtn) {
+            showConfirmRemoveMemberDialogBox(projectMembersList.get(position));
+            /*Log.e("Member Removed", projectMembersList.get(position).getFirstname());
+            removeMemberFromProject(projectMembersList.get(position));
+            projectMembersList.remove(position);
+            showProjectMembersAdapter.notifyDataSetChanged();*/
+        }
+        else if(!showRemoveBtn) {
+            String fullName = projectMembersList.get(position).getFirstname() + " " + projectMembersList.get(position).getLastname();
+            if(!createTaskAssignedToList.contains(fullName)) {
+                Log.e("Member Added", fullName);
+                createTaskAssignedToList.add(fullName);
+                assignedToNameAdapter.notifyDataSetChanged();
+            }
+            else {
+                Log.e("Member Already Added", fullName);
+            }
         }
     }
 }

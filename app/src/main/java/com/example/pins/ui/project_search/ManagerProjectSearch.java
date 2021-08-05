@@ -28,7 +28,6 @@ import com.example.pins.models.UserModel;
 import com.example.pins.structures.ProjectAdapter;
 import com.example.pins.ui.HomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -234,7 +233,7 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
 
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onProjectAdapterItemClick(View view, int position) {
         if (query.equalsIgnoreCase("")){
             showDialog(allProjects.get(position));
         }
@@ -255,7 +254,7 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
         EditText AuthCode = dialogView.findViewById(R.id.ManagerAuthCode);
         TextView projectName = dialogView.findViewById(R.id.alert_dialog_auth_project_name_tv);
         TextView projectManager = dialogView.findViewById(R.id.alert_dialog_auth_project_manager_tv);
-        Button noBtn = dialogView.findViewById(R.id.alert_dialog_auth_no_btn);
+        Button noBtn = dialogView.findViewById(R.id.alert_dialog_add_project_no_btn);
         Button yesBtn = dialogView.findViewById(R.id.alert_dialog_Auth_yes_btn);
 
         projectCode.setText(Project.getProjectCode());

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingVertical="20dp"
+    android:paddingHorizontal="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Task"
+        android:textSize="24sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_grey"
+        android:layout_marginVertical="10dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/alert_dialog_create_task_til"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusBottomEnd="10dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/alert_dialog_create_task_tie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark_grey"
+            android:maxLines="2"
+            android:minLines="2"
+            android:gravity="start"
+            android:textColorHint="@color/medium_grey"
+            android:hint="Task Name"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Assign To : "
+            android:textSize="16sp"
+            android:textColor="@color/dark_grey"
+            android:layout_gravity="center_vertical"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/alert_dialog_create_task_names_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/widget_name_container_small"
+                android:layout_marginBottom="10dp"/>
+
+            <ImageButton
+                android:id="@+id/alert_dialog_create_task_add_person_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add_grey_24"
+                android:background="@drawable/round_light_grey_bg"
+                android:padding="2dp"
+                android:layout_below="@id/alert_dialog_create_task_names_rv"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Priority : "
+            android:textSize="16sp"
+            android:textColor="@color/dark_grey"
+            android:layout_gravity="center_vertical"/>
+
+        <RadioGroup
+            android:id="@+id/alert_dialog_create_task_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:checkedButton="@id/alert_dialog_create_task_high_radio_btn">
+
+            <RadioButton
+                android:id="@+id/alert_dialog_create_task_high_radio_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="High"
+                android:textColor="@color/dark_grey"
+                android:textSize="16sp"
+                android:buttonTint="@color/green"
+                android:layout_marginEnd="10dp"/>
+
+            <RadioButton
+                android:id="@+id/alert_dialog_create_task_medium_radio_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Medium"
+                android:textSize="16sp"
+                android:textColor="@color/dark_grey"
+                android:buttonTint="@color/green"
+                android:layout_marginEnd="10dp"/>
+
+            <RadioButton
+                android:id="@+id/alert_dialog_create_task_low_radio_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Low"
+                android:textSize="16sp"
+                android:buttonTint="@color/green"
+                android:textColor="@color/dark_grey"/>
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/alert_dialog_create_task_no_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:layout_marginHorizontal="20dp"/>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+
+        <Button
+            android:id="@+id/alert_dialog_create_task_yes_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create"
+            android:layout_marginHorizontal="20dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

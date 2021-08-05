@@ -65,7 +65,9 @@ public class SignInActivity extends AppCompatActivity {
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
+                Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
+                intent.putExtra("ROLE", UserModel.ROLE_EMPLOYEE);
+                startActivity(intent);
                 finish();
             }
         });
@@ -109,7 +111,7 @@ public class SignInActivity extends AppCompatActivity {
                                             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
-                                                    if(task.isSuccessful()) {
+                                                    if(task.isSuccessful() && task.getResult() != null) {
                                                         userInstance.setUserInstance(task.getResult().toObject(UserModel.class));
                                                         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                                                         finish();

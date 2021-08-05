@@ -14,14 +14,13 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.pins.models.MessageModel;
+import com.example.pins.structures.ProjectAdapter;
 import com.example.pins.ui.chat_room.ChatRoomActivity;
 import com.example.pins.R;
 import com.example.pins.models.ContactModel;
 import com.example.pins.models.ProjectModel;
 import com.example.pins.models.UserModel;
 import com.example.pins.structures.ContactAdapter;
-import com.example.pins.structures.ProjectAdapter;
 import com.example.pins.ui.HomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -37,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllChatsActivity extends AppCompatActivity implements ContactAdapter.ItemClickListener, ProjectAdapter.ItemClickListener {
+public class AllChatsActivity extends AppCompatActivity implements ContactAdapter.ItemClickListener {
 
     RecyclerView contactsRV;
     TextView projectName;
@@ -169,8 +168,7 @@ public class AllChatsActivity extends AppCompatActivity implements ContactAdapte
     }
 
     @Override
-    public void onItemClick(View view, int position) {
-        Log.e("Contact Clicked", contactList.get(position).getFirstname());
+    public void onContactAdapterItemClick(View view, int position) {
         Intent intent = new Intent(getApplicationContext(), ChatRoomActivity.class);
         intent.putExtra("CONTACT_ID", contactList.get(position).getUserid());
         startActivity(intent);

@@ -26,10 +26,9 @@ import com.example.pins.databinding.FragmentMyboardBinding;
 import com.example.pins.models.ProjectModel;
 import com.example.pins.models.TaskModel;
 import com.example.pins.models.UserModel;
-import com.example.pins.structures.NameAdapter;
+import com.example.pins.structures.AssignedToNameAdapter;
 import com.example.pins.structures.TaskAdapter;
 import com.example.pins.ui.project_search.ProjectSearchActivity;
-import com.example.pins.ui.project_search.projectrequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -44,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickListener {
+public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickListener, AssignedToNameAdapter.ItemClickListener {
 
     private FragmentMyboardBinding binding;
 
@@ -53,7 +52,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     EditText searchField;
     ImageButton searchBtn;
     ImageButton closeSearchBtn;
-    ImageButton messages;
+    ImageButton chatBtn;
 
     RelativeLayout parentLayout;
     RelativeLayout errorMsgLayout;
@@ -70,7 +69,6 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     ImageButton todoExpandBtn;
     ImageButton doingExpandBtn;
     ImageButton doneExpandBtn;
-    ImageButton request;
 
     RecyclerView todoRecyclerview;
     RecyclerView doingRecyclerview;
@@ -125,12 +123,11 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         todoExpandBtn = binding.fragmentMyboardTodoExpandBtn;
         doingExpandBtn = binding.fragmentMyboardDoingExpandBtn;
         doneExpandBtn = binding.fragmentMyboardDoneExpandBtn;
-        request=binding.requests;
         searchedTaskRecyclerview = binding.fragmentMyboardSearchRecyclerview;
         todoRecyclerview = binding.fragmentMyboardTodoRecyclerview;
         doingRecyclerview = binding.fragmentMyboardDoingRecyclerview;
         doneRecyclerview = binding.fragmentMyboardDoneRecyclerview;
-        messages = binding.fragmentMyboardMsgBtn;
+        chatBtn = binding.fragmentMyboardMsgBtn;
 
         userInstance = UserModel.getUserInstance();
 
@@ -139,7 +136,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
 
         getCurrentProject();
 
-        messages.setOnClickListener(new View.OnClickListener() {
+        chatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(requireContext(), AllChatsActivity.class));
@@ -172,17 +169,6 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
             @Override
             public void afterTextChanged(Editable editable) {
 
-            }
-        });
-
-        request.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(MyBoardFragment.this.getActivity(),projectrequest.class);
-                startActivity(intent);
-
-                // Toast toast=Toast.makeText(getActivity(),"hello",Toast.LENGTH_SHORT);
-                //toast.show();
             }
         });
 
@@ -457,8 +443,9 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
 
         // Set names list
         dialogRV.setLayoutManager(new LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false));
-        NameAdapter nameAdapter = new NameAdapter(requireContext(), task.getAssignedTo());
-        dialogRV.setAdapter(nameAdapter);
+        AssignedToNameAdapter assignedToNameAdapter = new AssignedToNameAdapter(requireContext(),
+                task.getAssignedTo(), false, MyBoardFragment.this);
+        dialogRV.setAdapter(assignedToNameAdapter);
 
         // Set status
         if(currentTaskStatus.equals(TaskModel.STATUS_TODO)) {
@@ -573,7 +560,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onTaskAdapterItemClick(View view, int position) {
         if(isTodoBoardActive) {
             Log.e("Task Name", todoTaskList.get(position).getTaskName());
             showDialog(todoTaskList.get(position));
@@ -586,5 +573,10 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
             Log.e("Task Name", doneTaskList.get(position).getTaskName());
             showDialog(doneTaskList.get(position));
         }
+    }
+
+    @Override
+    public void onAssignedToNameAdapterItemClick(View view, int position) {
+
     }
 }

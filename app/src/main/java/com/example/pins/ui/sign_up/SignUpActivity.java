@@ -39,6 +39,8 @@ public class SignUpActivity extends AppCompatActivity {
 
     private UserModel userInstance;
 
+    String user_role = UserModel.ROLE_EMPLOYEE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +68,11 @@ public class SignUpActivity extends AppCompatActivity {
         parentLayout = findViewById(R.id.activity_signup_layout);
 
         userInstance = UserModel.getUserInstance();
+
+        Intent intentThatStartedThisActivity = getIntent();
+        if(intentThatStartedThisActivity.hasExtra("ROLE")) {
+            user_role = intentThatStartedThisActivity.getStringExtra("ROLE");
+        }
 
         SignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +116,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         userInstance.setFirstname(firstname_tie.getText().toString());
                                         userInstance.setLastname(lastname_tie.getText().toString());
                                         userInstance.setEmail(email_tie.getText().toString());
-                                        userInstance.setRole(UserModel.ROLE_EMPLOYEE);
+                                        userInstance.setRole(user_role);
                                         userInstance.setImageUrl("");
                                         userInstance.setCurrentProjectId("");
                                         userInstance.setAllProjects(null);

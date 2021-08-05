@@ -85,13 +85,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageA
         @Override
         public boolean onLongClick(View view) {
             if(clickListener != null) {
-                clickListener.onItemClick(view, getAdapterPosition());
+                clickListener.onMessageAdapterItemLongClick(view, getAdapterPosition());
             }
             return true;
         }
     }
 
     public interface ItemClickListener {
-        void onItemClick(View view, int position);
+        void onMessageAdapterItemLongClick(View view, int position);
     }
 }

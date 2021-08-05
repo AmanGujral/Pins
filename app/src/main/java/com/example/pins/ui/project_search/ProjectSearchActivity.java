@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -236,7 +235,7 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onProjectAdapterItemClick(View view, int position) {
         if(query.equalsIgnoreCase("")) {
             showDialog(allProjects.get(position));
         }
@@ -270,10 +269,10 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
         yesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //addProject(project);
+                addProject(project);
 
                 alertDialog.dismiss();
-                Toast toast=Toast.makeText(getApplicationContext(),"Request Sent to Manager",Toast.LENGTH_SHORT);
+                /*Toast toast=Toast.makeText(getApplicationContext(),"Request Sent to Manager",Toast.LENGTH_SHORT);
                 toast.show();
 
                 Map<String, String> usermap= new HashMap<>();
@@ -283,7 +282,7 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
 
                 firestoreInstance.collection("Projects").
                         document(project.getProjectId()).
-                        collection("UserRequests").add(usermap);
+                        collection("UserRequests").add(usermap);*/
 
 
             }

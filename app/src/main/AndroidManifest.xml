@@ -14,10 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pins.NoActionBar">
         <activity android:name=".ui.project_search.ManagerProjectSearch"></activity>
-        <activity android:name=".ui.project_search.projectrequest" />
-        <activity android:name=".ChatActivity" />
         <activity android:name=".ui.all_chats.AllChatsActivity" />
-        <activity android:name=".ui.message.messageactivity" />
+        <activity android:name=".ui.chat_room.ChatRoomActivity" />
         <activity
             android:name=".ui.logo.LogoActivity"
             android:theme="@style/Theme.Pins.NoActionBar.NoStatusBar">

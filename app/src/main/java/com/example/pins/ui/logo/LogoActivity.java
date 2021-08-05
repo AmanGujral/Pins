@@ -200,7 +200,7 @@ public class LogoActivity extends AppCompatActivity {
                             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
-                                    if(task.isSuccessful()) {
+                                    if(task.isSuccessful() && task.getResult() != null) {
                                         userInstance.setUserInstance(task.getResult().toObject(UserModel.class));
                                         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                                         finish();
