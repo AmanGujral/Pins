@@ -266,92 +266,28 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
         projectName.setText(Project.getProjectName());
         projectManager.setText(Project.getManagerName());
 
-        /*DocumentReference documentReference = firestoreInstance.collection("AuthCodes")
-                .document();
-        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()){
-                    String ACode=AuthCode.getText().toString();
-                    if (ACode.equals(documentSnapshot.getString("code"))){
-                        Log.e("Code:","Is same, passed auth");
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("OnFaliure:","failed");
-            }
-        });*/
 
-        yesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e("MESSAGE: ","CLICKED");
-                firestoreInstance.collection("Authorization Codes").document(Project.getProjectCode())
-                        .get()
-                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if ((documentSnapshot.exists())) {
-                            String VerifyCode=documentSnapshot.get("code").toString();
-                            if (VerifyCode.equals(AuthCode)){
-                                Log.e("Message:"," the code is equal");
-                            }
-                        }
-                    }
-                });
-            }
-        });
-
-        /*yesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_LONG);
-                firestoreInstance.collection("Authorization Codes").document(Project.getProjectCode()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if ((documentSnapshot.exists())) {
-                            String VerifyCode=documentSnapshot.get("code").toString();
-                            if (VerifyCode.equals(AuthCode)){
-                                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_SHORT);
-                            }
-                        }
-                    }
-                });
-            }
-        });*/
 
         alertDialog = alertDialogBuilder.create();
         alertDialog.setCancelable(true);
         alertDialog.show();
-
-        //DocumentReference fireRef = firestoreInstance.collection("Authorization Codes").document(Project.getProjectCode());
-        //fireRef.get(Source.valueOf("Code"));
-
-
-        /*firestoreInstance.collection("Authorization Codes")
-                .document(Project.getProjectCode())
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String Acod=AuthCode.getText().toString();
+                DocumentReference documentReference = firestoreInstance.collection("AuthCodes").document(Project.getProjectCode());
+                documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.exists()){
-                            String VrfyCode=documentSnapshot.getString("code");
-                            if (VrfyCode.equals(AuthCode)){
-                                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_SHORT);
-                            }
-                        }else{
-                            Toast.makeText(getApplicationContext(),"Document Missing",Toast.LENGTH_SHORT);
+                       String A= documentSnapshot.getString("code");
+                        Log.e("Message:","Value"+String.valueOf(A));
+                        if (A.equalsIgnoreCase(Acod)){
+                            Log.e("Message:","Welcome");
                         }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT);
+                });
+                Log.e("Message:","Value"+String.valueOf(Acod));
             }
-        });*/
-
+        });
     }
 }
