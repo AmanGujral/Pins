@@ -31,10 +31,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,6 +46,7 @@ import java.util.List;
 
 public class ManagerProjectSearch extends AppCompatActivity implements ProjectAdapter.ItemClickListener {
     private static final String TAG = null;
+    ProjectModel projectModel;
     ImageButton McloseBtn;
     ImageButton MsearchBtn;
     ImageButton McloseSearchBtn;
@@ -260,51 +264,39 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
         projectCode.setText(Project.getProjectCode());
         projectName.setText(Project.getProjectName());
         projectManager.setText(Project.getManagerName());
-        AuthCode.getText().toString();
+
+
 
         alertDialog = alertDialogBuilder.create();
         alertDialog.setCancelable(true);
         alertDialog.show();
-
         yesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_LONG);
-                firestoreInstance.collection("Authorization Codes").document(Project.getProjectCode()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                String Acod=AuthCode.getText().toString();
+                DocumentReference documentReference = firestoreInstance.collection("AuthCodes").document(Project.getProjectCode());
+                documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if ((documentSnapshot.exists())) {
-                            String VerifyCode=documentSnapshot.get("code").toString();
-                            if (VerifyCode.equals(AuthCode)){
-                                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_SHORT);
-                            }
+                       String A= documentSnapshot.getString("code");
+                        Log.e("Message:","Value"+String.valueOf(A));
+                        if (A.equalsIgnoreCase(Acod)){
+                            Log.e("Message:","Welcome");
                         }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Failure Message: ","Failed to get document");
                     }
                 });
             }
         });
-
-        /*firestoreInstance.collection("Authorization Codes")
-                .document(Project.getProjectCode())
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.exists()){
-                            String VrfyCode=documentSnapshot.getString("code");
-                            if (VrfyCode.equals(AuthCode)){
-                                Toast.makeText(getApplicationContext(),"Proceed to Manager Login",Toast.LENGTH_SHORT);
-                            }
-                        }else{
-                            Toast.makeText(getApplicationContext(),"Document Missing",Toast.LENGTH_SHORT);
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
+        noBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT);
+            public void onClick(View view) {
+                alertDialog.dismiss();
             }
-        });*/
-
+        });
     }
 }
