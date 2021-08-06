@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.pins.R;
 import com.example.pins.models.ContactModel;
@@ -27,18 +26,17 @@ import com.example.pins.models.ProjectModel;
 import com.example.pins.models.UserModel;
 import com.example.pins.structures.ProjectAdapter;
 import com.example.pins.ui.HomeActivity;
+import com.example.pins.ui.sign_up.SignUpActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.Source;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -283,7 +281,16 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
                        String A= documentSnapshot.getString("code");
                         Log.e("Message:","Value"+String.valueOf(A));
                         if (A.equalsIgnoreCase(Acod)){
-                            Log.e("Message:","Welcome");
+                            Log.e("Message:","Authorization Code is correct");
+                            if(Project.getManagerName()==""){
+                                firestoreInstance.collection("")
+                                Intent intent = new Intent(ManagerProjectSearch.this, SignUpActivity.class);
+                                intent.putExtra("ROLE",UserModel.ROLE_MANAGER);
+                                startActivity(intent);
+                                finish();
+                            }else{
+                                ErrorDialog();
+                            }
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -294,11 +301,33 @@ public class ManagerProjectSearch extends AppCompatActivity implements ProjectAd
                 });
             }
         });
-        noBtn.setOnClickListener(new View.OnClickListener() {
+        /*noBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 alertDialog.dismiss();
             }
-        });
+        });*/
+    }
+    public void ErrorDialog(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ManagerProjectSearch.this);
+        AlertDialog ErrDialog;
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_manager_exists_already, null);
+        alertDialogBuilder.setView(dialogView);
+
+        Button clsBtn = findViewById(R.id.alert_dialog_ME_close);
+
+        ErrDialog = alertDialogBuilder.create();
+        ErrDialog.setCancelable(true);
+        ErrDialog.show();
+
+        /*clsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });*/
+
     }
 }
