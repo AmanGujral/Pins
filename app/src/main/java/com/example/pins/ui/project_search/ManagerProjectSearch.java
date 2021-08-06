@@ -28,6 +28,7 @@ import com.example.pins.models.UserModel;
 import com.example.pins.structures.ProjectAdapter;
 import com.example.pins.ui.HomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -46,6 +47,7 @@ import java.util.List;
 
 public class ManagerProjectSearch extends AppCompatActivity implements ProjectAdapter.ItemClickListener {
     private static final String TAG = null;
+
     ProjectModel projectModel;
     ImageButton McloseBtn;
     ImageButton MsearchBtn;
