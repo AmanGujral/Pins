@@ -108,17 +108,19 @@
 
     </LinearLayout>
 
-    <!--<LinearLayout
+    <LinearLayout
+        android:id="@+id/alert_dialog_task_details_manager_operations_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_gravity="center_horizontal">
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone">
 
         <Button
-            android:id="@+id/alert_dialog_task_details_no_btn"
+            android:id="@+id/alert_dialog_task_details_edit_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="Edit"
             android:layout_marginHorizontal="20dp"/>
 
         <View
@@ -128,12 +130,12 @@
 
 
         <Button
-            android:id="@+id/alert_dialog_task_details_yes_btn"
+            android:id="@+id/alert_dialog_task_details_delete_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save"
+            android:text="Delete"
             android:layout_marginHorizontal="20dp"/>
 
-    </LinearLayout>-->
+    </LinearLayout>
 
 </LinearLayout>

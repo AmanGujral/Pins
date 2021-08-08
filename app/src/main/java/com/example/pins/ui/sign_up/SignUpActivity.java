@@ -11,9 +11,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.pins.R;
+import com.example.pins.models.ContactModel;
+import com.example.pins.models.ProjectMemberModel;
+import com.example.pins.models.ProjectModel;
 import com.example.pins.models.UserModel;
+import com.example.pins.ui.HomeActivity;
 import com.example.pins.ui.onboarding.OnboardingActivity;
-import com.example.pins.ui.project_search.ManagerProjectSearch;
 import com.example.pins.ui.project_search.ProjectSearchActivity;
 import com.example.pins.ui.sign_in.SignInActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,23 +26,39 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SignUpActivity extends AppCompatActivity {
 
     TextInputLayout firstname_til,lastname_til,email_til,password_til;
     TextInputEditText firstname_tie,lastname_tie,email_tie,password_tie;
 
-    Button SignUp, ManagerLogin;
+    Button SignUp;
     TextView SignIn;
+    TextView managerSignupBtn;
 
     RelativeLayout parentLayout;
 
+    List<ProjectMemberModel> projectMembers = new ArrayList<>();
+    List<ContactModel> contactList = new ArrayList<>();
+
+    FirebaseFirestore firestoreInstance = FirebaseFirestore.getInstance();
+
     private UserModel userInstance;
 
-    String user_role = UserModel.ROLE_EMPLOYEE;
+    public static final String KEY_MANAGER_SIGNUP = "MANAGER_SIGNUP";
+
+    String USER_ROLE = UserModel.ROLE_EMPLOYEE;
+    String PROJECT_ID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +81,26 @@ public class SignUpActivity extends AppCompatActivity {
         SignIn = findViewById(R.id.signup_signin_btn);
 
         //Manager Login
-        ManagerLogin=findViewById(R.id.ManagerLoginBtn);
+        managerSignupBtn =findViewById(R.id.activity_signin_manager_btn);
 
 
-        parentLayout = findViewById(R.id.activity_signup_layout);
+        parentLayout = findViewById(R.id.activity_signup_parent_layout);
 
         userInstance = UserModel.getUserInstance();
 
         Intent intentThatStartedThisActivity = getIntent();
-        if(intentThatStartedThisActivity.hasExtra("ROLE")) {
-            user_role = intentThatStartedThisActivity.getStringExtra("ROLE");
+        if(intentThatStartedThisActivity.hasExtra(ProjectSearchActivity.KEY_ROLE)) {
+            USER_ROLE = intentThatStartedThisActivity.getStringExtra(ProjectSearchActivity.KEY_ROLE);
+        }
+        if(intentThatStartedThisActivity.hasExtra(ProjectSearchActivity.KEY_PROJECT_ID)) {
+            PROJECT_ID = intentThatStartedThisActivity.getStringExtra(ProjectSearchActivity.KEY_PROJECT_ID);
+        }
+
+        if(PROJECT_ID.isEmpty() && !USER_ROLE.equals(UserModel.ROLE_MANAGER)) {
+            managerSignupBtn.setVisibility(View.VISIBLE);
+        }
+        else {
+            managerSignupBtn.setVisibility(View.INVISIBLE);
         }
 
         SignIn.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +145,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         userInstance.setFirstname(firstname_tie.getText().toString());
                                         userInstance.setLastname(lastname_tie.getText().toString());
                                         userInstance.setEmail(email_tie.getText().toString());
-                                        userInstance.setRole(user_role);
+                                        userInstance.setRole(USER_ROLE);
                                         userInstance.setImageUrl("");
                                         userInstance.setCurrentProjectId("");
                                         userInstance.setAllProjects(null);
@@ -137,8 +166,24 @@ public class SignUpActivity extends AppCompatActivity {
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull @NotNull Task<Void> task) {
-                                                        startActivity(new Intent(SignUpActivity.this, OnboardingActivity.class));
-                                                        finish();
+                                                        if(PROJECT_ID.isEmpty() && !USER_ROLE.equals(UserModel.ROLE_MANAGER)) {
+                                                            startActivity(new Intent(SignUpActivity.this, OnboardingActivity.class));
+                                                            finish();
+                                                        }
+                                                        else {
+                                                            firestoreInstance.collection("Projects")
+                                                                    .document(PROJECT_ID)
+                                                                    .get()
+                                                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
+                                                                            if(task.isSuccessful() && task.getResult() != null) {
+                                                                                ProjectModel project = task.getResult().toObject(ProjectModel.class);
+                                                                                joinProjectAsManager(project);
+                                                                            }
+                                                                        }
+                                                                    });
+                                                        }
                                                     }
                                                 });
                                     }
@@ -153,13 +198,118 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
         });
-        ManagerLogin.setOnClickListener(new View.OnClickListener() {
+
+        managerSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(SignUpActivity.this, ManagerProjectSearch.class));
-                finish();
+                Intent intent = new Intent(SignUpActivity.this, ProjectSearchActivity.class);
+                intent.putExtra(KEY_MANAGER_SIGNUP, true);
+                startActivity(intent);
             }
         });
+    }
+
+    public void joinProjectAsManager(ProjectModel project) {
+        projectMembers.clear();
+        List<String> allProjects = new ArrayList<>();
+
+        allProjects.add(project.getProjectId());
+
+        // Update current user info such as currentProjectId
+        userInstance.setAllProjects(allProjects);
+        userInstance.setCurrentProjectId(project.getProjectId());
+
+        // Create Project member model object for current user
+        ProjectMemberModel projectMember = new ProjectMemberModel(
+                userInstance.getUserid(),
+                userInstance.getFirstname(),
+                userInstance.getLastname(),
+                userInstance.getEmail(),
+                UserModel.ROLE_MANAGER,
+                userInstance.getImageUrl()
+        );
+
+        // Update Current User Data in DB
+        firestoreInstance.collection("Users")
+                .document(userInstance.getUserid())
+                .set(userInstance, SetOptions.merge());
+
+        firestoreInstance.collection("Projects")
+                .document(project.getProjectId())
+                .update("managerName", userInstance.getFirstname() + " " + userInstance.getLastname(),
+                        "managerEmail", userInstance.getEmail());
+
+        // Get all project members and add to contactList + Add current user as a contact to all other project members
+        firestoreInstance.collection("Projects")
+                .document(project.getProjectId())
+                .collection("Project Members")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful() && task.getResult() != null) {
+                            ContactModel currentUserContact = new ContactModel(
+                                    userInstance.getUserid(),
+                                    userInstance.getFirstname(),
+                                    userInstance.getLastname(),
+                                    userInstance.getImageUrl(),
+                                    "",
+                                    "",
+                                    0L,
+                                    true
+                            );
+                            for(QueryDocumentSnapshot doc : task.getResult()) {
+                                projectMembers.add(doc.toObject(ProjectMemberModel.class));
+                            }
+                            for(ProjectMemberModel projectMemberModel : projectMembers) {
+                                firestoreInstance.collection("Projects")
+                                        .document(project.getProjectId())
+                                        .collection("Project Members")
+                                        .document(projectMemberModel.getUserid())
+                                        .collection("Contacts")
+                                        .document(userInstance.getUserid())
+                                        .set(currentUserContact, SetOptions.merge());
+
+                                ContactModel contact = new ContactModel(
+                                        projectMemberModel.getUserid(),
+                                        projectMemberModel.getFirstname(),
+                                        projectMemberModel.getLastname(),
+                                        projectMemberModel.getImageUrl(),
+                                        "",
+                                        "",
+                                        0L,
+                                        true
+                                );
+                                contactList.add(contact);
+                            }
+                        }
+                    }
+                });
+
+        // Add the user to Project Members + Add all other project members as Contacts to the current user
+        firestoreInstance.collection("Projects")
+                .document(project.getProjectId())
+                .collection("Project Members")
+                .document(userInstance.getUserid())
+                .set(projectMember, SetOptions.merge())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            for(ContactModel contact : contactList) {
+                                firestoreInstance.collection("Projects")
+                                        .document(project.getProjectId())
+                                        .collection("Project Members")
+                                        .document(userInstance.getUserid())
+                                        .collection("Contacts")
+                                        .document(contact.getUserid())
+                                        .set(contact, SetOptions.merge());
+                            }
+                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                            finish();
+                        }
+                    }
+                });
     }
 
     private void clearErrors(){

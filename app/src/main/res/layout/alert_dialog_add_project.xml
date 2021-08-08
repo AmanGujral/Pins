@@ -89,6 +89,17 @@
 
     </LinearLayout>
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/alert_dialog_add_project_manager_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join as Manager\t"
+        android:textSize="16sp"
+        android:textColor="@color/medium_grey"
+        android:checked="false"
+        android:theme="@style/Theme.Pins.NoActionBar.NoStatusBar"
+        android:paddingHorizontal="20dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

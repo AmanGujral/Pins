@@ -113,7 +113,9 @@ public class AllChatsActivity extends AppCompatActivity implements ContactAdapte
     }
 
     public void getContacts() {
-        FirebaseFirestore.getInstance()
+        contactsRV.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+        /*FirebaseFirestore.getInstance()
                 .collection("Projects")
                 .document(currentProject.getProjectId())
                 .collection("Project Members")
@@ -136,7 +138,7 @@ public class AllChatsActivity extends AppCompatActivity implements ContactAdapte
                             contactsRV.setAdapter(contactAdapter);
                         }
                     }
-                });
+                });*/
 
         FirebaseFirestore.getInstance()
                 .collection("Projects")
@@ -159,9 +161,12 @@ public class AllChatsActivity extends AppCompatActivity implements ContactAdapte
                             for(QueryDocumentSnapshot doc : snapshot) {
                                 contactList.add(doc.toObject(ContactModel.class));
                             }
-                            if(contactAdapter != null) {
+                            //contactsRV.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                            contactAdapter = new ContactAdapter(getApplicationContext(), contactList, AllChatsActivity.this);
+                            contactsRV.setAdapter(contactAdapter);
+                            /*if(contactAdapter != null) {
                                 contactAdapter.notifyDataSetChanged();
-                            }
+                            }*/
                         }
                     }
                 });

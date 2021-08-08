@@ -2,138 +2,40 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="20dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Join this Project as manager?"
-        android:textSize="24sp"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/dark_grey"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="10dp"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="5dp"
-        android:layout_marginTop="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Project Code : "
-            android:textSize="16sp"
-            android:textColor="@color/medium_grey"/>
-
-        <TextView
-            android:id="@+id/alert_dialog_auth_project_code_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Project Code"
-            android:textSize="16sp"
-            android:textColor="@color/green"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="5dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Project Name : "
-            android:textSize="16sp"
-            android:textColor="@color/medium_grey"/>
-
-        <TextView
-            android:id="@+id/alert_dialog_auth_project_name_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Project Name"
-            android:textSize="16sp"
-            android:textColor="@color/green"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="5dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Project Manager : "
-            android:textSize="16sp"
-            android:textColor="@color/medium_grey"/>
-
-        <TextView
-            android:id="@+id/alert_dialog_auth_project_manager_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Project Manager"
-            android:textSize="16sp"
-            android:textColor="@color/green"/>
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="5dp">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enter Authorization Code:"
-        android:textColor="@color/medium_grey"
-        android:textSize="16sp"
-        />
-        <EditText
-            android:id="@+id/ManagerAuthCode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10sp"
-            android:paddingBottom="10sp"/>
-    </LinearLayout>
+        android:text="Please enter the 5-digit Authorization code for this project"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"/>
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/alert_dialog_authorization_code_edittext"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="20dp">
+        android:textSize="24sp"
+        android:text=""
+        android:maxLength="5"
+        android:maxLines="1"
+        android:minWidth="200dp"
+        android:letterSpacing="1"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/board_border"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginVertical="20dp"/>
 
-        <Button
-            android:id="@+id/alert_dialog_auth_no_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancel"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="20dp"/>
-
-
-        <Button
-            android:id="@+id/alert_dialog_Auth_yes_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Yes"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="20dp"/>
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/alert_dialog_authorization_submit_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="20dp"/>
 
 </LinearLayout>

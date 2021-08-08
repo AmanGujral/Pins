@@ -6,21 +6,21 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.pins.R;
@@ -28,13 +28,14 @@ import com.example.pins.databinding.FragmentProfileBinding;
 import com.example.pins.models.ProjectMemberModel;
 import com.example.pins.models.ProjectModel;
 import com.example.pins.models.UserModel;
+import com.example.pins.structures.ShowProjectMembersAdapter;
 import com.example.pins.ui.HomeActivity;
+import com.example.pins.ui.all_chats.AllChatsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -50,9 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.ContentValues.TAG;
-
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements ShowProjectMembersAdapter.ItemClickListener{
 
     private static final int SELECT_IMAGE = 1;
 
@@ -65,12 +64,17 @@ public class ProfileFragment extends Fragment {
     CardView leaveProjectBtn;
     CardView projectNameCV;
     ImageView profileImageView;
+    ImageButton chatBtn;
     RelativeLayout parentLayout;
 
     UserModel userInstance = UserModel.getUserInstance();
     ProjectModel currentProject;
 
+    ProjectMemberModel currentUserProjectMember;
+    String currentUserProjectRole = UserModel.ROLE_EMPLOYEE;
+
     List<ProjectMemberModel> projectMembersList = new ArrayList<>();
+    List<ProjectMemberModel> projectMemberListWithoutCurrentUser = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -87,6 +91,7 @@ public class ProfileFragment extends Fragment {
         projectNameCV = binding.fragmentProfileCurrentProjectCv;
         profileImageView = binding.profileImage;
         parentLayout = binding.fragmentProfileParent;
+        chatBtn = binding.fragmentProfileChatBtn;
 
         getCurrentProject();
 
@@ -99,6 +104,13 @@ public class ProfileFragment extends Fragment {
                 .centerCrop()
                 .placeholder(R.drawable.profiledefault)
                 .into(profileImageView);
+
+        chatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(requireContext(), AllChatsActivity.class));
+            }
+        });
 
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,6 +159,7 @@ public class ProfileFragment extends Fragment {
                                     currentProjectCode.setText(currentProject.getProjectCode());
                                     currentProjectName.setText(currentProject.getProjectName());
                                     getCurrentProjectMembers();
+                                    getCurrentProjectMemberRole();
                                 }
                             }
                         }
@@ -157,6 +170,49 @@ public class ProfileFragment extends Fragment {
             staticText.setVisibility(View.GONE);
             leaveProjectBtn.setVisibility(View.GONE);
             leaveProjectBtn.setEnabled(false);
+        }
+    }
+
+    public void getCurrentProjectMembers() {
+        FirebaseFirestore.getInstance()
+                .collection("Projects")
+                .document(userInstance.getCurrentProjectId())
+                .collection("Project Members")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            for(QueryDocumentSnapshot doc : task.getResult()) {
+                                if(doc.toObject(ProjectMemberModel.class).getUserid().equals(userInstance.getUserid())) {
+                                    currentUserProjectMember = doc.toObject(ProjectMemberModel.class);
+                                }
+                                else {
+                                    projectMemberListWithoutCurrentUser.add(doc.toObject(ProjectMemberModel.class));
+                                }
+                                projectMembersList.add(doc.toObject(ProjectMemberModel.class));
+                            }
+                        }
+                    }
+                });
+    }
+
+    public void getCurrentProjectMemberRole() {
+        if(userInstance != null) {
+            FirebaseFirestore.getInstance()
+                    .collection("Projects")
+                    .document(userInstance.getCurrentProjectId())
+                    .collection("Project Members")
+                    .document(userInstance.getUserid())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull @NotNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful() && task.getResult() != null) {
+                                currentUserProjectRole = task.getResult().toObject(ProjectMemberModel.class).getRole();
+                            }
+                        }
+                    });
         }
     }
 
@@ -287,23 +343,33 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    public void getCurrentProjectMembers() {
+    public void changeProjectManager(ProjectMemberModel projectMember) {
         FirebaseFirestore.getInstance()
                 .collection("Projects")
-                .document(userInstance.getCurrentProjectId())
-                .collection("Project Members")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .document(currentProject.getProjectId())
+                .update("managerName", projectMember.getFirstname() + " " + projectMember.getLastname(),
+                        "managerEmail", projectMember.getEmail())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            for(QueryDocumentSnapshot doc : task.getResult()) {
-                                projectMembersList.add(doc.toObject(ProjectMemberModel.class));
-                            }
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            FirebaseFirestore.getInstance()
+                                    .collection("Projects")
+                                    .document(currentProject.getProjectId())
+                                    .collection("Project Members")
+                                    .document(projectMember.getUserid())
+                                    .update("role", ProjectMemberModel.ROLE_MANAGER)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                            if(task.isSuccessful()) {
+                                                removeMemberFromProject(currentUserProjectMember);
+                                            }
+                                        }
+                                    });
                         }
                     }
                 });
-
     }
 
     public void showSnackBar(String message) {
@@ -338,12 +404,52 @@ public class ProfileFragment extends Fragment {
         yesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("Project Left", currentProject.getProjectName());
-                removeMemberFromProject(projectMember);
+                if(currentUserProjectRole.equals(ProjectMemberModel.ROLE_MANAGER)) {
+                    showProjectMembersDialogBox(false, true);
+                }
+                else {
+                    removeMemberFromProject(projectMember);
+                    alertDialog.dismiss();
+                }
+            }
+        });
+    }
+
+    public void showProjectMembersDialogBox(Boolean showRemoveBtn, Boolean showAcceptBtn) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireActivity());
+        AlertDialog alertDialog;
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_show_project_members, null);
+        alertDialogBuilder.setView(dialogView);
+
+        TextView titleTv = dialogView.findViewById(R.id.alert_dialog_show_project_members_tv);
+        RecyclerView dialogRV = dialogView.findViewById(R.id.alert_dialog_show_project_members_rv);
+        Button doneBtn = dialogView.findViewById(R.id.alert_dialog_show_project_members_yes_btn);
+
+        titleTv.setText("Select a person to make Manager");
+
+        // Set names list
+        dialogRV.setLayoutManager(new LinearLayoutManager(requireContext()));
+        ShowProjectMembersAdapter showProjectMembersAdapter = new ShowProjectMembersAdapter(requireContext(),
+                projectMemberListWithoutCurrentUser, showRemoveBtn, showAcceptBtn, this);
+        dialogRV.setAdapter(showProjectMembersAdapter);
+
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        doneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 alertDialog.dismiss();
             }
         });
     }
 
+    @Override
+    public void onShowProjectMembersAdapterItemClick(View view, int position, Boolean showRemoveBtn, Boolean showAcceptBtn) {
+        changeProjectManager(projectMemberListWithoutCurrentUser.get(position));
+    }
 }
 

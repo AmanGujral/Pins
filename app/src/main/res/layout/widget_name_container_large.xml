@@ -9,17 +9,40 @@
         android:id="@+id/widget_name_container_large_tv"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="HelloHelloHelloHelloHelloHello"
+        android:text=""
         android:maxLines="1"
         android:textSize="24sp"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
         android:paddingStart="20dp"
-        android:paddingEnd="50dp"
+        android:paddingEnd="90dp"
         android:textColor="@color/dark_grey"
         android:background="@drawable/round_light_grey_bg" />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/widget_name_container_large_accept_cv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="4dp"
+        android:layout_marginEnd="10dp"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/widget_name_container_large_remove_cv"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/widget_name_container_large_accept_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_check_white_24"
+            android:layout_gravity="center"
+            android:background="@color/green"
+            android:tooltipText="Add to Project" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/widget_name_container_large_remove_cv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardCornerRadius="20dp"

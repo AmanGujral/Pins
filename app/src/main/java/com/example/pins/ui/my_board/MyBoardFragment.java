@@ -95,6 +95,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     Boolean isTodoBoardActive = true;
     Boolean isDoingBoardActive = false;
     Boolean isDoneBoardActive = false;
+    Boolean isSearching = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -343,18 +344,21 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     }
 
     public void showErrorLayout() {
+        isSearching = false;
         errorMsgLayout.setVisibility(View.VISIBLE);
         searchLayout.setVisibility(View.GONE);
         boardLayout.setVisibility(View.GONE);
     }
 
     public void showSearchLayout() {
+        isSearching = true;
         errorMsgLayout.setVisibility(View.GONE);
         searchLayout.setVisibility(View.VISIBLE);
         boardLayout.setVisibility(View.GONE);
     }
 
     public void showBoardLayout() {
+        isSearching = false;
         errorMsgLayout.setVisibility(View.GONE);
         searchLayout.setVisibility(View.GONE);
         boardLayout.setVisibility(View.VISIBLE);
@@ -422,6 +426,8 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         TextView dialogDoingBtn = dialogView.findViewById(R.id.alert_dialog_task_details_doing_btn);
         TextView dialogDoneBtn = dialogView.findViewById(R.id.alert_dialog_task_details_done_btn);
         RecyclerView dialogRV = dialogView.findViewById(R.id.alert_dialog_task_details_names_rv);
+        LinearLayout operationsBar = dialogView.findViewById(R.id.alert_dialog_task_details_manager_operations_bar);
+        operationsBar.setVisibility(View.GONE);
 
 
         // Set task name/description
@@ -557,21 +563,31 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
                         }
                     }
                 });
+
+        if(isSearching) {
+            searchedTaskAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
     public void onTaskAdapterItemClick(View view, int position) {
-        if(isTodoBoardActive) {
-            Log.e("Task Name", todoTaskList.get(position).getTaskName());
-            showDialog(todoTaskList.get(position));
+        if(isSearching) {
+            Log.e("Task Name", searchedTasksList.get(position).getTaskName());
+            showDialog(searchedTasksList.get(position));
         }
-        if(isDoingBoardActive) {
-            Log.e("Task Name", doingTaskList.get(position).getTaskName());
-            showDialog(doingTaskList.get(position));
-        }
-        if(isDoneBoardActive) {
-            Log.e("Task Name", doneTaskList.get(position).getTaskName());
-            showDialog(doneTaskList.get(position));
+        else {
+            if (isTodoBoardActive) {
+                Log.e("Task Name", todoTaskList.get(position).getTaskName());
+                showDialog(todoTaskList.get(position));
+            }
+            if (isDoingBoardActive) {
+                Log.e("Task Name", doingTaskList.get(position).getTaskName());
+                showDialog(doingTaskList.get(position));
+            }
+            if (isDoneBoardActive) {
+                Log.e("Task Name", doneTaskList.get(position).getTaskName());
+                showDialog(doneTaskList.get(position));
+            }
         }
     }
 
