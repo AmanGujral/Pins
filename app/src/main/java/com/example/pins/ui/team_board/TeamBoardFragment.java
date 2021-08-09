@@ -1295,25 +1295,43 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
     @Override
     public void onTaskAdapterItemClick(View view, int position) {
         String userFullName = userInstance.getFirstname() + " " + userInstance.getLastname();
-        if(isSearching) {
-            if(searchedTaskList.get(position).getAssignedTo().contains(userFullName)) {
+        if(currentUserProjectRole.equals(UserModel.ROLE_MANAGER)) {
+            if(isSearching) {
                 showTaskDetailsDialogBox(searchedTaskList.get(position));
+            }
+            else {
+                if (isTodoBoardActive) {
+                    showTaskDetailsDialogBox(todoTaskList.get(position));
+                }
+                if (isDoingBoardActive) {
+                    showTaskDetailsDialogBox(doingTaskList.get(position));
+                }
+                if (isDoneBoardActive) {
+                    showTaskDetailsDialogBox(doneTaskList.get(position));
+                }
             }
         }
         else {
-            if (isTodoBoardActive) {
-                if(todoTaskList.get(position).getAssignedTo().contains(userFullName)) {
-                    showTaskDetailsDialogBox(todoTaskList.get(position));
+            if(isSearching) {
+                if(searchedTaskList.get(position).getAssignedTo().contains(userFullName)) {
+                    showTaskDetailsDialogBox(searchedTaskList.get(position));
                 }
             }
-            if (isDoingBoardActive) {
-                if(doingTaskList.get(position).getAssignedTo().contains(userFullName)) {
-                    showTaskDetailsDialogBox(doingTaskList.get(position));
+            else {
+                if (isTodoBoardActive) {
+                    if(todoTaskList.get(position).getAssignedTo().contains(userFullName)) {
+                        showTaskDetailsDialogBox(todoTaskList.get(position));
+                    }
                 }
-            }
-            if (isDoneBoardActive) {
-                if(doneTaskList.get(position).getAssignedTo().contains(userFullName)) {
-                    showTaskDetailsDialogBox(doneTaskList.get(position));
+                if (isDoingBoardActive) {
+                    if(doingTaskList.get(position).getAssignedTo().contains(userFullName)) {
+                        showTaskDetailsDialogBox(doingTaskList.get(position));
+                    }
+                }
+                if (isDoneBoardActive) {
+                    if(doneTaskList.get(position).getAssignedTo().contains(userFullName)) {
+                        showTaskDetailsDialogBox(doneTaskList.get(position));
+                    }
                 }
             }
         }
