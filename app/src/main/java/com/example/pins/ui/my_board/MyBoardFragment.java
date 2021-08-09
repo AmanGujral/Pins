@@ -103,9 +103,6 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         binding = FragmentMyboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-
-
-
         projectName = binding.fragmentMyboardProjectName;
         errorMsgLayout = binding.fragmentMyboardErrorMsg;
         joinNowBtn = binding.fragmentMyboardJoinNowBtn;
@@ -162,7 +159,12 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
                 else {
                     searchBtn.setVisibility(View.VISIBLE);
                     closeSearchBtn.setVisibility(View.GONE);
-                    showBoardLayout();
+                    if(currentProject != null) {
+                        showBoardLayout();
+                    }
+                    else {
+                        showErrorLayout();
+                    }
                 }
                 Log.e("QUERY: ", query);
             }
@@ -183,7 +185,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
                     searchTasks(query);
                 }
                 else {
-                    Snackbar.make(parentLayout, "Enter a valid task name.", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(parentLayout, R.string.enter_a_valid_task_name, Snackbar.LENGTH_SHORT)
                             .setBackgroundTint(getResources().getColor(R.color.green_dark))
                             .show();
                 }
@@ -194,7 +196,7 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
             @Override
             public void onClick(View view) {
                 searchField.setText("");
-                showBoardLayout();
+                //showBoardLayout();
             }
         });
 
@@ -230,31 +232,33 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     }
 
     private void searchTasks(String taskName) {
-        searchedTasksList.clear();
-        String userFullName = userInstance.getFirstname() + " " + userInstance.getLastname();
+        if(currentProject != null) {
+            searchedTasksList.clear();
+            String userFullName = userInstance.getFirstname() + " " + userInstance.getLastname();
 
-        firestoreInstance.collection("Projects")
-                .document(currentProject.getProjectId())
-                .collection("Tasks")
-                .orderBy("taskName")
-                .whereArrayContains("assignedTo", userFullName)
-                .whereGreaterThanOrEqualTo("taskName", taskName)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful() && task.getResult() != null) {
-                            for (QueryDocumentSnapshot doc : task.getResult()) {
-                                searchedTasksList.add(doc.toObject(TaskModel.class));
+            firestoreInstance.collection("Projects")
+                    .document(currentProject.getProjectId())
+                    .collection("Tasks")
+                    .orderBy("taskName")
+                    .whereArrayContains("assignedTo", userFullName)
+                    .whereGreaterThanOrEqualTo("taskName", taskName)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful() && task.getResult() != null) {
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+                                    searchedTasksList.add(doc.toObject(TaskModel.class));
+                                }
+                                searchedTaskRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+
+                                searchedTaskAdapter = new TaskAdapter(getContext(), searchedTasksList,MyBoardFragment.this);
+
+                                searchedTaskRecyclerview.setAdapter(searchedTaskAdapter);
                             }
-                            searchedTaskRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-
-                            searchedTaskAdapter = new TaskAdapter(getContext(), searchedTasksList,MyBoardFragment.this);
-
-                            searchedTaskRecyclerview.setAdapter(searchedTaskAdapter);
                         }
-                    }
-                });
+                    });
+        }
 
     }
 
@@ -436,15 +440,15 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
         // Set task priority
         if(task.getPriority().equals(TaskModel.PRIORITY_HIGH)) {
             dialogPriorityTV.setTextColor(requireActivity().getResources().getColor(R.color.red));
-            dialogPriorityTV.setText("High");
+            dialogPriorityTV.setText(R.string.high);
         }
         else if (task.getPriority().equals(TaskModel.PRIORITY_MEDIUM)) {
             dialogPriorityTV.setTextColor(requireActivity().getResources().getColor(R.color.yellow));
-            dialogPriorityTV.setText("Medium");
+            dialogPriorityTV.setText(R.string.medium);
         }
         else {
             dialogPriorityTV.setTextColor(requireActivity().getResources().getColor(R.color.green));
-            dialogPriorityTV.setText("Low");
+            dialogPriorityTV.setText(R.string.low);
         }
 
         // Set names list
@@ -572,20 +576,16 @@ public class MyBoardFragment extends Fragment implements TaskAdapter.ItemClickLi
     @Override
     public void onTaskAdapterItemClick(View view, int position) {
         if(isSearching) {
-            Log.e("Task Name", searchedTasksList.get(position).getTaskName());
             showDialog(searchedTasksList.get(position));
         }
         else {
             if (isTodoBoardActive) {
-                Log.e("Task Name", todoTaskList.get(position).getTaskName());
                 showDialog(todoTaskList.get(position));
             }
             if (isDoingBoardActive) {
-                Log.e("Task Name", doingTaskList.get(position).getTaskName());
                 showDialog(doingTaskList.get(position));
             }
             if (isDoneBoardActive) {
-                Log.e("Task Name", doneTaskList.get(position).getTaskName());
                 showDialog(doneTaskList.get(position));
             }
         }

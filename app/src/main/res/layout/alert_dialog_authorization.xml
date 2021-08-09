@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Please enter the 5-digit Authorization code for this project"
+        android:text="@string/enter_authorization_code"
         android:textSize="18sp"
         android:gravity="center"
         android:layout_gravity="center_horizontal"/>
@@ -33,7 +33,7 @@
         android:id="@+id/alert_dialog_authorization_submit_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit"
+        android:text="@string/submit"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="20dp"/>

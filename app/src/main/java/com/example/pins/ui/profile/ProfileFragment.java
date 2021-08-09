@@ -220,7 +220,7 @@ public class ProfileFragment extends Fragment implements ShowProjectMembersAdapt
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"),SELECT_IMAGE);
+        startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_picture)),SELECT_IMAGE);
     }
 
     @Override
@@ -233,7 +233,7 @@ public class ProfileFragment extends Fragment implements ShowProjectMembersAdapt
                     uploadImage(file);
                 }
             } else if (resultCode == Activity.RESULT_CANCELED)  {
-                Snackbar.make(parentLayout, "Cancelled", Snackbar.LENGTH_SHORT)
+                Snackbar.make(parentLayout, R.string.cancelled, Snackbar.LENGTH_SHORT)
                         .setBackgroundTint(getResources().getColor(R.color.green_dark))
                         .show();
             }
@@ -243,7 +243,7 @@ public class ProfileFragment extends Fragment implements ShowProjectMembersAdapt
     //method to upload data picture selected by user to firestore and updating imgurl in database
     private void uploadImage(Uri file) {
         final ProgressDialog progressDialog = new ProgressDialog(requireContext());
-        progressDialog.setTitle("Uploading Image");
+        progressDialog.setTitle(R.string.uploading_image);
         progressDialog.show();
 
         //String storagePath = "Profile_Pictures/" + userInstance.getUserid() + "/" + file.getLastPathSegment() + ".jpg";
@@ -256,7 +256,7 @@ public class ProfileFragment extends Fragment implements ShowProjectMembersAdapt
             @Override
             public void onFailure(@NonNull Exception e) {
                 progressDialog.dismiss();
-                Snackbar.make(parentLayout, e.getMessage(), Snackbar.LENGTH_SHORT)
+                Snackbar.make(parentLayout, e.getLocalizedMessage(), Snackbar.LENGTH_SHORT)
                         .setBackgroundTint(getResources().getColor(R.color.green_dark))
                         .show();
             }
@@ -288,7 +288,7 @@ public class ProfileFragment extends Fragment implements ShowProjectMembersAdapt
             @Override
             public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
                 double ProgPercent = (snapshot.getBytesTransferred()/ snapshot.getTotalByteCount()) * 100;
-                progressDialog.setMessage("Percentage: " + ProgPercent + "%");
+                progressDialog.setMessage(R.string.percentage + ": " + ProgPercent + "%");
             }
         });
     }
@@ -333,7 +333,7 @@ public class ProfileFragment extends Fragment implements ShowProjectMembersAdapt
                     @Override
                     public void onComplete(@NonNull @NotNull Task<Void> task) {
                         if(task.isSuccessful()) {
-                            showSnackBar("Project Left.");
+                            showSnackBar(getResources().getString(R.string.project_left));
                             startActivity(new Intent(requireContext(), HomeActivity.class));
                             requireActivity().finish();
                         }
@@ -427,7 +427,7 @@ public class ProfileFragment extends Fragment implements ShowProjectMembersAdapt
         RecyclerView dialogRV = dialogView.findViewById(R.id.alert_dialog_show_project_members_rv);
         Button doneBtn = dialogView.findViewById(R.id.alert_dialog_show_project_members_yes_btn);
 
-        titleTv.setText("Select a person to make Manager");
+        titleTv.setText(R.string.select_a_person_to_make_manager);
 
         // Set names list
         dialogRV.setLayoutManager(new LinearLayoutManager(requireContext()));

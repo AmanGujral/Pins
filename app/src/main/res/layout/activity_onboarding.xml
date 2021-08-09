@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-black"
-        android:text="Welcome,"
+        android:text="@string/welcome"
         android:textSize="50sp"
         android:textStyle="bold"
         android:textColor="@color/medium_grey" />
@@ -21,7 +21,7 @@
         android:id="@+id/activity_onboarding_username_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username"
+        android:text=""
         android:textColor="@color/green"
         android:textSize="40sp"
         android:fontFamily="sans-serif-light"
@@ -42,7 +42,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Please click "
+                android:text="@string/please_click"
                 android:textSize="22sp"
                 android:fontFamily="sans-serif-condensed"
                 android:textColor="@color/medium_grey"/>
@@ -50,7 +50,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Continue"
+                android:text="@string/continue_text"
                 android:textSize="22sp"
                 android:fontFamily="sans-serif-condensed"
                 android:textColor="@color/green"/>
@@ -60,7 +60,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="to join your first project."
+            android:text="@string/to_join_your_first_project"
             android:textSize="22sp"
             android:fontFamily="sans-serif-condensed"
             android:textColor="@color/medium_grey"
@@ -69,11 +69,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="\nIf you wish to join later,"
+            android:text="@string/if_you_wish_to_join_later"
             android:textSize="22sp"
             android:fontFamily="sans-serif-condensed"
             android:textColor="@color/medium_grey"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -83,7 +84,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="click "
+                android:text="@string/click"
                 android:textSize="22sp"
                 android:fontFamily="sans-serif-condensed"
                 android:textColor="@color/medium_grey"/>
@@ -91,7 +92,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Skip\n\n"
+                android:text="@string/skip"
                 android:textSize="22sp"
                 android:fontFamily="sans-serif-condensed"
                 android:textColor="@color/dark_grey"/>
@@ -107,12 +108,13 @@
             app:cardCornerRadius="10dp"
             app:cardElevation="4dp"
             android:layout_marginBottom="10dp"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Continue"
+                android:text="@string/continue_text"
                 android:fontFamily="sans-serif-condensed-medium"
                 android:textSize="18sp"
                 android:textColor="@color/white"/>
@@ -125,7 +127,7 @@
         android:id="@+id/activity_onboarding_skip_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Skip"
+        android:text="@string/skip"
         android:textColor="@color/medium_grey"
         android:textSize="18sp"
         android:layout_alignParentBottom="true"

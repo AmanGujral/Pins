@@ -107,7 +107,7 @@
                     android:id="@+id/activity_chat_room_message_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Type a message "
+                    android:hint="@string/type_a_message"
                     android:textSize="18sp"
                     android:textColor="@color/dark_grey"
                     android:background="@drawable/grey_border_2dp"

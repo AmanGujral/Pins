@@ -26,7 +26,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Proj. Code : "
+                    android:text="@string/project_code"
                     android:textSize="16sp"
                     android:textColor="@color/medium_grey"/>
 
@@ -34,7 +34,7 @@
                     android:id="@+id/widget_project_container_projectcode_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PC102"
+                    android:text=""
                     android:textSize="16sp"
                     android:textColor="@color/green"/>
 
@@ -49,7 +49,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Proj. Name : "
+                    android:text="@string/project_name"
                     android:textSize="16sp"
                     android:textColor="@color/medium_grey"/>
 
@@ -57,7 +57,7 @@
                     android:id="@+id/widget_project_container_projectname_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Project Management"
+                    android:text=""
                     android:textSize="16sp"
                     android:textColor="@color/green"/>
 
@@ -72,7 +72,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Proj. Manager : "
+                    android:text="@string/project_manager"
                     android:textSize="16sp"
                     android:textColor="@color/medium_grey"/>
 
@@ -80,7 +80,7 @@
                     android:id="@+id/widget_project_container_projectmanager_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Amanpreet Singh"
+                    android:text=""
                     android:textSize="16sp"
                     android:textColor="@color/green"/>
 

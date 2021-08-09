@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Authorization Successful!\nPlease continue to complete your Sign Up process."
+        android:text="@string/authorization_successful"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:textSize="22sp"
@@ -20,7 +20,7 @@
         android:id="@+id/alert_dialog_authorization_successful_continue_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="continue"
+        android:text="@string/continue_text"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"/>

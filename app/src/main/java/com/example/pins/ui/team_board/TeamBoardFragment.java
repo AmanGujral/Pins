@@ -166,7 +166,6 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
         searchBtn.setVisibility(View.VISIBLE);
         closeSearchBtn.setVisibility(View.GONE);
 
-        getCurrentProjectMemberRole();
         getCurrentProject();
 
         createTaskBtn.setOnClickListener(new View.OnClickListener() {
@@ -215,7 +214,12 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
                 else {
                     searchBtn.setVisibility(View.VISIBLE);
                     closeSearchBtn.setVisibility(View.GONE);
-                    showBoardLayout();
+                    if(currentProject != null) {
+                        showBoardLayout();
+                    }
+                    else {
+                        showErrorLayout();
+                    }
                 }
                 Log.e("QUERY: ", query);
             }
@@ -236,7 +240,7 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
                     searchTasks(query);
                 }
                 else {
-                    showSnackBar("Enter a valid task name.");
+                    showSnackBar(getResources().getString(R.string.enter_a_valid_task_name));
                 }
             }
         });
@@ -323,6 +327,7 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
                             if (task.isSuccessful() && task.getResult() != null) {
                                 currentProject = task.getResult().toObject(ProjectModel.class);
                                 getCurrentProjectMembers();
+                                getCurrentProjectMemberRole();
                                 initLayout();
                             }
                         }
@@ -427,29 +432,31 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
     }
 
     private void searchTasks(String taskName) {
-        searchedTaskList.clear();
+        if(currentProject != null) {
+            searchedTaskList.clear();
 
-        firestoreInstance.collection("Projects")
-                .document(currentProject.getProjectId())
-                .collection("Tasks")
-                .orderBy("taskName")
-                .whereGreaterThanOrEqualTo("taskName", taskName)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            for (QueryDocumentSnapshot doc : task.getResult()) {
-                                searchedTaskList.add(doc.toObject(TaskModel.class));
+            firestoreInstance.collection("Projects")
+                    .document(currentProject.getProjectId())
+                    .collection("Tasks")
+                    .orderBy("taskName")
+                    .whereGreaterThanOrEqualTo("taskName", taskName)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull @NotNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+                                    searchedTaskList.add(doc.toObject(TaskModel.class));
+                                }
+                                searchedTasksRecyclerview.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+                                searchedTaskAdapter = new TaskAdapter(getContext(), searchedTaskList,TeamBoardFragment.this);
+
+                                searchedTasksRecyclerview.setAdapter(searchedTaskAdapter);
                             }
-                            searchedTasksRecyclerview.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-                            searchedTaskAdapter = new TaskAdapter(getContext(), searchedTaskList,TeamBoardFragment.this);
-
-                            searchedTasksRecyclerview.setAdapter(searchedTaskAdapter);
                         }
-                    }
-                });
+                    });
+        }
     }
 
     public void addTaskToDB(TaskModel taskModel) {
@@ -500,6 +507,9 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
 
                             if (user.getAllProjects() != null) {
                                 allProjects = user.getAllProjects();
+                            }
+                            else {
+                                user.setCurrentProjectId(currentProject.getProjectId());
                             }
                             allProjects.add(currentProject.getProjectId());
 
@@ -708,7 +718,7 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
                                                 if(task.isSuccessful()) {
                                                     showSnackBar(projectMember.getFirstname() + " "
                                                             + projectMember.getLastname()
-                                                            + " removed from the project.");
+                                                            + " " + R.string.removed_from_the_project);
                                                 }
                                             }
                                         });
@@ -820,7 +830,7 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
         Button cancelBtn = dialogView.findViewById(R.id.alert_dialog_create_task_no_btn);
         Button createBtn = dialogView.findViewById(R.id.alert_dialog_create_task_yes_btn);
 
-        title.setText("Create Task");
+        title.setText(R.string.create_task);
 
         // Set names list
         dialogRV.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -853,11 +863,11 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
             public void onClick(View view) {
                 if(taskNameTie.getText() == null || Objects.requireNonNull(taskNameTie.getText()).toString().isEmpty()) {
                     // Show Error
-                    showSnackBar("Task name cannot be empty.");
+                    showSnackBar(getResources().getString(R.string.task_name_cannot_be_empty));
                 }
                 else if(createTaskAssignedToList.isEmpty()) {
                     // Show Error
-                    showSnackBar("Assign task to at least 1 person.");
+                    showSnackBar(getResources().getString(R.string.assign_task_to_atleast_1_person));
                 }
                 else {
                     String priority = TaskModel.PRIORITY_HIGH;
@@ -913,7 +923,7 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
         Button createBtn = dialogView.findViewById(R.id.alert_dialog_create_task_yes_btn);
 
 
-        title.setText("Edit Task");
+        title.setText(R.string.edit_task);
 
         taskNameTie.setText(taskModel.getTaskName());
 
@@ -927,7 +937,7 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
             lowRadioBtn.setChecked(true);
         }
 
-        createBtn.setText("Save");
+        createBtn.setText(R.string.save);
 
         // Set names list
         dialogRV.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -960,11 +970,11 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
             public void onClick(View view) {
                 if(taskNameTie.getText() == null || Objects.requireNonNull(taskNameTie.getText()).toString().isEmpty()) {
                     // Show Error
-                    showSnackBar("Task name cannot be empty.");
+                    showSnackBar(getResources().getString(R.string.task_name_cannot_be_empty));
                 }
                 else if(createTaskAssignedToList.isEmpty()) {
                     // Show Error
-                    showSnackBar("Assign task to at least 1 person.");
+                    showSnackBar(getResources().getString(R.string.assign_task_to_atleast_1_person));
                 }
                 else {
                     String priority = TaskModel.PRIORITY_HIGH;
@@ -1010,10 +1020,10 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
         Button doneBtn = dialogView.findViewById(R.id.alert_dialog_show_project_members_yes_btn);
 
         if(showAcceptBtn) {
-            titleTv.setText("User Requests");
+            titleTv.setText(R.string.user_requests);
         }
         else {
-            titleTv.setText("Project Members");
+            titleTv.setText(R.string.project_members);
         }
 
         // Set names list
@@ -1065,10 +1075,9 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
             @Override
             public void onClick(View view) {
                 if(projectMember.getUserid().equals(userInstance.getUserid())) {
-                    showSnackBar("You cannot remove yourself.");
+                    showSnackBar(getResources().getString(R.string.you_cannot_remove_yourself));
                 }
                 else {
-                    Log.e("Member Removed", projectMember.getFirstname());
                     removeMemberFromProject(projectMember);
                     currentProjectMembersList.remove(projectMember);
                     showProjectMembersAdapter.notifyDataSetChanged();
@@ -1147,15 +1156,15 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
         // Set task priority
         if(task.getPriority().equals(TaskModel.PRIORITY_HIGH)) {
             dialogPriorityTV.setTextColor(requireActivity().getResources().getColor(R.color.red));
-            dialogPriorityTV.setText("High");
+            dialogPriorityTV.setText(R.string.high);
         }
         else if (task.getPriority().equals(TaskModel.PRIORITY_MEDIUM)) {
             dialogPriorityTV.setTextColor(requireActivity().getResources().getColor(R.color.yellow));
-            dialogPriorityTV.setText("Medium");
+            dialogPriorityTV.setText(R.string.medium);
         }
         else {
             dialogPriorityTV.setTextColor(requireActivity().getResources().getColor(R.color.green));
-            dialogPriorityTV.setText("Low");
+            dialogPriorityTV.setText(R.string.low);
         }
 
         // Set names list
@@ -1314,17 +1323,12 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
     public void onAssignedToNameAdapterItemClick(View view, int position) {
         String removedName = createTaskAssignedToList.remove(position);
         assignedToNameAdapter.notifyDataSetChanged();
-        Log.e("Removed Name", removedName);
     }
 
     @Override
     public void onShowProjectMembersAdapterItemClick(View view, int position, Boolean showRemoveBtn, Boolean showAcceptBtn) {
         if(showRemoveBtn && !showAcceptBtn) {
             showConfirmRemoveMemberDialogBox(currentProjectMembersList.get(position));
-            /*Log.e("Member Removed", projectMembersList.get(position).getFirstname());
-            removeMemberFromProject(projectMembersList.get(position));
-            projectMembersList.remove(position);
-            showProjectMembersAdapter.notifyDataSetChanged();*/
         }
         else if(showRemoveBtn && showAcceptBtn) {
             if(view.getId() == R.id.widget_name_container_large_accept_btn) {
@@ -1337,7 +1341,6 @@ public class TeamBoardFragment extends Fragment implements TaskAdapter.ItemClick
         else if(!showRemoveBtn) {
             String fullName = currentProjectMembersList.get(position).getFirstname() + " " + currentProjectMembersList.get(position).getLastname();
             if(!createTaskAssignedToList.contains(fullName)) {
-                Log.e("Member Added", fullName);
                 createTaskAssignedToList.add(fullName);
                 assignedToNameAdapter.notifyDataSetChanged();
             }

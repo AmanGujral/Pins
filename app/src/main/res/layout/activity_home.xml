@@ -85,6 +85,7 @@
                 android:background="@color/transparent"
                 android:scaleX="1.5"
                 android:scaleY="1.5"
+                android:tooltipText="@string/logout"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="30dp"

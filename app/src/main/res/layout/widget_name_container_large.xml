@@ -37,7 +37,7 @@
             android:src="@drawable/ic_check_white_24"
             android:layout_gravity="center"
             android:background="@color/green"
-            android:tooltipText="Add to Project" />
+            android:tooltipText="@string/add_to_project" />
 
     </androidx.cardview.widget.CardView>
 
@@ -58,7 +58,7 @@
             android:src="@drawable/ic_close_white_24"
             android:layout_gravity="center"
             android:background="@color/red_dark"
-            android:tooltipText="Remove"
+            android:tooltipText="@string/remove"
             android:visibility="visible"/>
 
         <ImageButton
@@ -68,7 +68,7 @@
             android:src="@drawable/ic_add_white_24"
             android:layout_gravity="center"
             android:background="@color/green"
-            android:tooltipText="Add"
+            android:tooltipText="@string/add"
             android:visibility="gone"/>
 
     </androidx.cardview.widget.CardView>

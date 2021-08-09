@@ -131,7 +131,7 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
                     searchProjects(query);
                 }
                 else {
-                    showSnackBar("Enter a valid Project Code.");
+                    showSnackBar(getResources().getString(R.string.enter_a_valid_project_code));
                 }
             }
         });
@@ -358,10 +358,10 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
                                 @Override
                                 public void onClick(View view) {
                                     if(authCode.getText().toString().isEmpty()) {
-                                        showSnackBar("Enter a valid Authorization Code!");
+                                        showSnackBar(getResources().getString(R.string.enter_a_valid_authorization_code));
                                     }
                                     if(!authCode.getText().toString().equalsIgnoreCase(task.getResult().getString("code"))) {
-                                        showSnackBar("Authorization Code Invalid!");
+                                        showSnackBar(getResources().getString(R.string.authorization_code_invalid));
                                     }
                                     else {
                                         if(isManagerSignup) {
@@ -432,7 +432,7 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
         if (userInstance.getAllProjects() != null) {
             allProjects = userInstance.getAllProjects();
             if(allProjects.contains(project.getProjectId())) {
-                Snackbar.make(parentLayout, "You are already added to this project.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(parentLayout, R.string.you_are_already_added_to_this_project, Snackbar.LENGTH_SHORT)
                         .setBackgroundTint(getResources().getColor(R.color.green_dark))
                         .show();
                 return;
@@ -448,7 +448,7 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
                     @Override
                     public void onComplete(@NonNull @NotNull Task<Void> task) {
                         if(task.isSuccessful()) {
-                            Snackbar.make(parentLayout, "Join Request Sent.", Snackbar.LENGTH_SHORT)
+                            Snackbar.make(parentLayout, R.string.join_request_sent, Snackbar.LENGTH_SHORT)
                                     .setBackgroundTint(getResources().getColor(R.color.green_dark))
                                     .show();
                         }
@@ -468,7 +468,7 @@ public class ProjectSearchActivity extends AppCompatActivity implements ProjectA
         if (userInstance.getAllProjects() != null) {
             allProjects = userInstance.getAllProjects();
             if(allProjects.contains(project.getProjectId())) {
-                Snackbar.make(parentLayout, "You are already added to this project.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(parentLayout, R.string.you_are_already_added_to_this_project, Snackbar.LENGTH_SHORT)
                         .setBackgroundTint(getResources().getColor(R.color.green_dark))
                         .show();
                 return;

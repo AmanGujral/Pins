@@ -11,7 +11,7 @@
         android:id="@+id/alert_dialog_show_project_members_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Project Members"
+        android:text="@string/project_members"
         android:textSize="24sp"/>
 
     <View
@@ -31,7 +31,7 @@
         android:id="@+id/alert_dialog_show_project_members_yes_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"
+        android:text="@string/done_text"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"/>

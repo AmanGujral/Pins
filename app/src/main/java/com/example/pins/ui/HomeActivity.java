@@ -39,11 +39,6 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity implements SidePanelProjectAdapter.ItemClickListener{
 
     private ActivityHomeBinding binding;
-    public static final String USERS_COLLECTION_PATH = "users";
-    public static final String CHAT_COLLECTION_PATH = "chatroom";
-    public static final String MESSAGES_COLLECTION_PATH = "messages";
-    public static final String PROJECTS_COLLECTION_PATH="Projects";
-    public static final String LAST_MSG_PATH = "lastMsg";
 
     ImageButton hidePanelBtn;
     ImageButton showPanelBtn;
@@ -124,6 +119,14 @@ public class HomeActivity extends AppCompatActivity implements SidePanelProjectA
         if(userInstance.getAllProjects() != null && userInstance.getAllProjects().size() != 0) {
             Log.e("PROJECTS", String.valueOf(userInstance.getAllProjects().size()));
             List<String> projectIds = userInstance.getAllProjects();
+
+            if(userInstance.getCurrentProjectId().isEmpty()) {
+                userInstance.setCurrentProjectId(projectIds.get(0));
+                FirebaseFirestore.getInstance()
+                        .collection("Users")
+                        .document(userInstance.getUserid())
+                        .update("currentProjectId", userInstance.getCurrentProjectId());
+            }
 
             FirebaseFirestore.getInstance()
                     .collection("Projects")

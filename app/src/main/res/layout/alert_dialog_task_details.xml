@@ -12,7 +12,7 @@
         android:id="@+id/alert_dialog_task_description_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Task Description"
+        android:text=""
         android:textSize="20sp"
         android:textColor="@color/dark_grey" />
 
@@ -40,7 +40,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Priority : "
+            android:text="@string/priority"
             android:textSize="16sp"
             android:textColor="@color/dark_grey" />
 
@@ -48,7 +48,7 @@
             android:id="@+id/alert_dialog_task_details_priority_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="High"
+            android:text=""
             android:textSize="16sp"
             android:textColor="@color/red" />
 
@@ -65,14 +65,19 @@
 
         <TextView
             android:id="@+id/alert_dialog_task_details_todo_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="To Do"
+            android:text="@string/todo"
+            android:maxLines="1"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeTextType="uniform"
             android:textColor="@color/white"
             android:textSize="18sp"
+            android:gravity="center"
             android:paddingHorizontal="20dp"
             android:paddingVertical="5dp"
-            android:background="@color/green"/>
+            android:background="@color/green" />
 
         <View
             android:layout_width="1dp"
@@ -81,14 +86,19 @@
 
         <TextView
             android:id="@+id/alert_dialog_task_details_doing_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="Doing"
+            android:text="@string/doing"
             android:textColor="@color/dark_grey"
+            android:maxLines="1"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeTextType="uniform"
             android:textSize="18sp"
             android:paddingHorizontal="20dp"
+            android:gravity="center"
             android:paddingVertical="5dp"
-            android:background="@color/white"/>
+            android:background="@color/white" />
 
         <View
             android:layout_width="1dp"
@@ -97,14 +107,19 @@
 
         <TextView
             android:id="@+id/alert_dialog_task_details_done_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="Done"
+            android:text="@string/done"
             android:textColor="@color/dark_grey"
+            android:maxLines="1"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
             android:textSize="18sp"
             android:paddingHorizontal="20dp"
             android:paddingVertical="5dp"
-            android:background="@color/white"/>
+            android:background="@color/white" />
 
     </LinearLayout>
 
@@ -120,7 +135,7 @@
             android:id="@+id/alert_dialog_task_details_edit_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit"
+            android:text="@string/edit"
             android:layout_marginHorizontal="20dp"/>
 
         <View
@@ -133,7 +148,7 @@
             android:id="@+id/alert_dialog_task_details_delete_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete"
+            android:text="@string/delete"
             android:layout_marginHorizontal="20dp"/>
 
     </LinearLayout>

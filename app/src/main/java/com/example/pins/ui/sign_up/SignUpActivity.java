@@ -117,17 +117,17 @@ public class SignUpActivity extends AppCompatActivity {
                 clearErrors();
 
                 if(firstname_tie.getText().toString().isEmpty()){
-                    firstname_til.setError("First Name cannot be empty!");
+                    firstname_til.setError(getResources().getString(R.string.first_name_cannot_be_empty));
                 }
                 else if(lastname_tie.getText().toString().isEmpty()){
-                    lastname_til.setError("Last Name cannot be empty!");
+                    lastname_til.setError(getResources().getString(R.string.last_name_cannot_be_empty));
                 }
                 else if(email_tie.getText().toString().isEmpty()){
-                    email_til.setError("Please enter a valid Email Id!");
+                    email_til.setError(getResources().getString(R.string.please_enter_a_valid_email));
                 }
                 else if(password_tie.getText().toString().isEmpty() || password_tie.getText().toString().length() < 6){
                     email_til.setError(null);
-                    password_til.setError("Password must be at least 6 characters long!");
+                    password_til.setError(getResources().getString(R.string.password_must_be_atleast_6_characters_long));
                 }
                 else{
                     clearErrors();
@@ -188,7 +188,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                 });
                                     }
                                     else {
-                                        Snackbar.make(parentLayout, "Authentication Failed!", Snackbar.LENGTH_SHORT)
+                                        Snackbar.make(parentLayout, R.string.authentication_failed, Snackbar.LENGTH_SHORT)
                                                 .setBackgroundTint(getResources().getColor(R.color.green))
                                                 .show();
                                     }

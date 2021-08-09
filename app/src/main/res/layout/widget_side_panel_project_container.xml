@@ -8,10 +8,10 @@
         android:id="@+id/widget_side_panel_project_container_project_initials_tv"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:text="PM"
+        android:text=""
         android:textSize="28sp"
         android:textColor="@color/medium_grey"
-        android:tooltipText="Project Name"
+        android:tooltipText=""
         android:gravity="center"
         android:layout_centerInParent="true"
         android:background="@drawable/grey_border_2dp"/>

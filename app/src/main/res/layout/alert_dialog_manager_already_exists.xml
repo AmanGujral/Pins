@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This project already has a Manager. Please try a different project."
+        android:text="@string/manager_already_exists_text"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:textSize="22sp"
@@ -20,7 +20,7 @@
         android:id="@+id/alert_dialog_manager_already_exists_close_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="close"
+        android:text="@string/close"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"/>

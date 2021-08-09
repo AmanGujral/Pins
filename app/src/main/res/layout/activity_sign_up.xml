@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sign_text"
-            android:textSize="66sp"
+            android:textSize="50sp"
             android:fontFamily="sans-serif-black"
             android:textColor="@color/medium_grey"/>
 
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:text="@string/up_text"
             android:fontFamily="sans-serif-black"
-            android:textSize="66sp"
+            android:textSize="50sp"
             android:textColor="@color/green" />
 
     </LinearLayout>
@@ -68,7 +68,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/green"
-                        android:hint="First Name" />
+                        android:hint="@string/first_name" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -87,7 +87,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/green"
-                        android:hint="Last Name" />
+                        android:hint="@string/last_name" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -106,7 +106,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/green"
-                        android:hint="Email" />
+                        android:hint="@string/email" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -127,7 +127,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/green"
-                        android:hint="Password"
+                        android:hint="@string/password"
                         android:inputType="textPassword"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -176,7 +176,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Manager?"
+        android:text="@string/manager"
         android:textColor="@color/green_dark"
         android:textSize="18sp"
         android:clickable="true"

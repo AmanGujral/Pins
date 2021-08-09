@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chats"
+            android:text="@string/chats"
             android:textSize="44sp"
             android:textColor="@color/medium_grey"
             android:fontFamily="sans-serif-black"
@@ -42,7 +42,7 @@
         android:id="@+id/activity_all_chats_project_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Project Name"
+        android:text=""
         android:textSize="24sp"
         android:textColor="@color/green"
         android:fontFamily="sans-serif-light"
@@ -69,7 +69,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chat Unavailable!"
+            android:text="@string/chat_unavailable"
             android:textSize="22sp"
             android:textColor="@color/dark_grey"
             android:layout_centerInParent="true"/>

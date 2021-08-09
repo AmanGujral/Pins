@@ -81,21 +81,21 @@ public class SignInActivity extends AppCompatActivity {
                 String password  = passwordTie.getText().toString().trim();
 
                 if(TextUtils.isEmpty(email)){
-                    emailTil.setError("Please enter a valid email!");
+                    emailTil.setError(getResources().getString(R.string.please_enter_a_valid_email));
                     return;
                 }
 
                 if(TextUtils.isEmpty(password)){
-                    passwordTil.setError("Password cannot be empty!");
+                    passwordTil.setError(getResources().getString(R.string.password_cannot_be_empty));
                     return;
                 }
 
                 if(!TextUtils.isEmpty(password) && password.length() < 6){
-                    passwordTil.setError("Password must be at least 6 characters long!");
+                    passwordTil.setError(getResources().getString(R.string.password_must_be_atleast_6_characters_long));
                     return;
                 }
 
-                mProgressDialog.setMessage("Signing In Please Wait...");
+                mProgressDialog.setMessage(getResources().getString(R.string.signing_in_please_wait));
                 mProgressDialog.show();
 
                 FirebaseAuth.getInstance()
@@ -121,7 +121,7 @@ public class SignInActivity extends AppCompatActivity {
                                             });
                                 }
                                 else {
-                                    Snackbar.make(parentLayout, "Authentication Failed!", Snackbar.LENGTH_SHORT)
+                                    Snackbar.make(parentLayout, R.string.authentication_failed, Snackbar.LENGTH_SHORT)
                                             .setBackgroundTint(getResources().getColor(R.color.green))
                                             .show();
                                 }

@@ -47,7 +47,7 @@ public class ContactAdapter extends  RecyclerView.Adapter<ContactAdapter.MyViewH
             holder.lastMsg.setText(contact.getLastMsg());
         }
         else {
-            holder.lastMsg.setText("Say hello!");
+            holder.lastMsg.setText(R.string.say_hello);
             holder.lastMsg.setTextColor(context.getResources().getColor(R.color.green));
         }
         holder.lastMsgTime.setText(contact.getLastMsgTime());
